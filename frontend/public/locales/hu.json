@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Helyszín lekérése",
+        "specifyLocation": "Adja meg a helyszínt",
+        "country": "Ország",
+        "pinCode": "Irányítószám",
+        "state": "Állam",
+        "district": "Kerület",
+        "area": "Terület",
+        "lookup": "Keresés",
+        "or": "vagy",
+        "useCurrentLocation": "Aktuális hely használata",
+        "cancel": "Mégse",
+        "ok": "OK"
+    }
+}

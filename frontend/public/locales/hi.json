@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "स्थान प्राप्त करें",
+        "specifyLocation": "स्थान निर्दिष्ट करें",
+        "country": "देश",
+        "pinCode": "पिन कोड",
+        "state": "राज्य",
+        "district": "जिला",
+        "area": "क्षेत्र",
+        "lookup": "खोजें",
+        "or": "या",
+        "useCurrentLocation": "वर्तमान स्थान का उपयोग करें",
+        "cancel": "रद्द करें",
+        "ok": "ठीक है"
+    }
+}

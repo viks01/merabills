@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Locatie ophalen",
+        "specifyLocation": "Specificeer locatie",
+        "country": "Land",
+        "pinCode": "Postcode",
+        "state": "Staat",
+        "district": "District",
+        "area": "Gebied",
+        "lookup": "Zoeken",
+        "or": "of",
+        "useCurrentLocation": "Gebruik huidige locatie",
+        "cancel": "Annuleren",
+        "ok": "OK"
+    }
+}

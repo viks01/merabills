@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Dobij lokaciju",
+        "specifyLocation": "Navedite lokaciju",
+        "country": "Država",
+        "pinCode": "Poštanski broj",
+        "state": "Država",
+        "district": "Okrug",
+        "area": "Područje",
+        "lookup": "Pretraži",
+        "or": "ili",
+        "useCurrentLocation": "Koristite trenutnu lokaciju",
+        "cancel": "Odustani",
+        "ok": "U redu"
+    }
+}

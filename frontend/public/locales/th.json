@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "รับตำแหน่ง",
+        "specifyLocation": "ระบุตำแหน่ง",
+        "country": "ประเทศ",
+        "pinCode": "รหัสไปรษณีย์",
+        "state": "รัฐ",
+        "district": "อำเภอ",
+        "area": "พื้นที่",
+        "lookup": "ค้นหา",
+        "or": "หรือ",
+        "useCurrentLocation": "ใช้ตำแหน่งปัจจุบัน",
+        "cancel": "ยกเลิก",
+        "ok": "ตกลง"
+    }
+}

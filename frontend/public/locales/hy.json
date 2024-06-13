@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Ստանալ վայր",
+        "specifyLocation": "Ցույց տալ վայր",
+        "country": "Երկիր",
+        "pinCode": "Փոստային ինդեքս",
+        "state": "Նահանգ",
+        "district": "Շրջան",
+        "area": "Տարածք",
+        "lookup": "Որոնել",
+        "or": "կամ",
+        "useCurrentLocation": "Օգտագործել ընթացիկ վայրը",
+        "cancel": "Չեղարկել",
+        "ok": "Հաստատել"
+    }
+}

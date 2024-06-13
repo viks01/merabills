@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Akiri lokon",
+        "specifyLocation": "Specifu lokon",
+        "country": "Lando",
+        "pinCode": "Poŝtkodo",
+        "state": "Ŝtato",
+        "district": "Distrikto",
+        "area": "Areo",
+        "lookup": "Serĉi",
+        "or": "aŭ",
+        "useCurrentLocation": "Uzi nunan lokon",
+        "cancel": "Nuligi",
+        "ok": "Bone"
+    }
+}

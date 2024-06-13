@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "இடத்தைப் பெறுக",
+        "specifyLocation": "இடத்தை குறிப்பிடுக",
+        "country": "நாடு",
+        "pinCode": "அஞ்சல் குறியீடு",
+        "state": "மாநிலம்",
+        "district": "மாவட்டம்",
+        "area": "பகுதி",
+        "lookup": "தேடுக",
+        "or": "அல்லது",
+        "useCurrentLocation": "தற்போதைய இடத்தைப் பயன்படுத்தவும்",
+        "cancel": "ரத்து செய்",
+        "ok": "சரி"
+    }
+}

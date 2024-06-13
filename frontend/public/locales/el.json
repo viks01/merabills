@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Λήψη τοποθεσίας",
+        "specifyLocation": "Προσδιορίστε την τοποθεσία",
+        "country": "Χώρα",
+        "pinCode": "Ταχυδρομικός κώδικας",
+        "state": "Πολιτεία",
+        "district": "Περιοχή",
+        "area": "Περιοχή",
+        "lookup": "Αναζήτηση",
+        "or": "ή",
+        "useCurrentLocation": "Χρήση τρέχουσας τοποθεσίας",
+        "cancel": "Ακύρωση",
+        "ok": "Εντάξει"
+    }
+}

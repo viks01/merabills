@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Lortu kokapena",
+        "specifyLocation": "Zehaztu kokapena",
+        "country": "Herrialdea",
+        "pinCode": "Posta kodea",
+        "state": "Estatua",
+        "district": "Barrutia",
+        "area": "Eremua",
+        "lookup": "Bilatu",
+        "or": "edo",
+        "useCurrentLocation": "Erabili egungo kokapena",
+        "cancel": "Utzi",
+        "ok": "Ados"
+    }
+}

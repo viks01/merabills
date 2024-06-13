@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Ottieni posizione",
+        "specifyLocation": "Specifica posizione",
+        "country": "Paese",
+        "pinCode": "CAP",
+        "state": "Stato",
+        "district": "Distretto",
+        "area": "Area",
+        "lookup": "Cerca",
+        "or": "o",
+        "useCurrentLocation": "Usa posizione corrente",
+        "cancel": "Annulla",
+        "ok": "OK"
+    }
+}

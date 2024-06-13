@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Hankige asukoht",
+        "specifyLocation": "Määrake asukoht",
+        "country": "Riik",
+        "pinCode": "Postiindeks",
+        "state": "Osariik",
+        "district": "Piirkond",
+        "area": "Ala",
+        "lookup": "Otsing",
+        "or": "või",
+        "useCurrentLocation": "Kasutage praegust asukohta",
+        "cancel": "Tühista",
+        "ok": "Okei"
+    }
+}

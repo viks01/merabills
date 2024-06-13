@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Få placering",
+        "specifyLocation": "Angiv placering",
+        "country": "Land",
+        "pinCode": "Postnummer",
+        "state": "Stat",
+        "district": "Distrikt",
+        "area": "Område",
+        "lookup": "Opslag",
+        "or": "eller",
+        "useCurrentLocation": "Brug nuværende placering",
+        "cancel": "Annuller",
+        "ok": "OK"
+    }
+}

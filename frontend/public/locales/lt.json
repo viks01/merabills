@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Gauti vietą",
+        "specifyLocation": "Nurodykite vietą",
+        "country": "Šalis",
+        "pinCode": "Pašto kodas",
+        "state": "Valstija",
+        "district": "Apskritis",
+        "area": "Sritis",
+        "lookup": "Ieškoti",
+        "or": "arba",
+        "useCurrentLocation": "Naudoti dabartinę vietą",
+        "cancel": "Atšaukti",
+        "ok": "Gerai"
+    }
+}

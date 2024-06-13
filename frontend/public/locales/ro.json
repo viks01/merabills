@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Obțineți locația",
+        "specifyLocation": "Specificați locația",
+        "country": "Țară",
+        "pinCode": "Cod poștal",
+        "state": "Stat",
+        "district": "District",
+        "area": "Zonă",
+        "lookup": "Căutare",
+        "or": "sau",
+        "useCurrentLocation": "Utilizați locația curentă",
+        "cancel": "Anulați",
+        "ok": "OK"
+    }
+}

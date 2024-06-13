@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "الحصول على الموقع",
+        "specifyLocation": "تحديد الموقع",
+        "country": "البلد",
+        "pinCode": "الرمز البريدي",
+        "state": "الولاية",
+        "district": "المنطقة",
+        "area": "المساحة",
+        "lookup": "بحث",
+        "or": "أو",
+        "useCurrentLocation": "استخدام الموقع الحالي",
+        "cancel": "إلغاء",
+        "ok": "موافق"
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Obter localização",
+        "specifyLocation": "Especificar localização",
+        "country": "País",
+        "pinCode": "Código Postal",
+        "state": "Estado",
+        "district": "Distrito",
+        "area": "Área",
+        "lookup": "Procurar",
+        "or": "ou",
+        "useCurrentLocation": "Usar localização atual",
+        "cancel": "Cancelar",
+        "ok": "OK"
+    }
+}

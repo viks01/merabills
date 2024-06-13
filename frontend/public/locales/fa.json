@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "دریافت موقعیت",
+        "specifyLocation": "مشخص کردن موقعیت",
+        "country": "کشور",
+        "pinCode": "کد پستی",
+        "state": "ایالت",
+        "district": "منطقه",
+        "area": "ناحیه",
+        "lookup": "جستجو",
+        "or": "یا",
+        "useCurrentLocation": "استفاده از موقعیت فعلی",
+        "cancel": "لغو",
+        "ok": "تایید"
+    }
+}

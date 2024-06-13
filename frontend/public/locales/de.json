@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Standort abrufen",
+        "specifyLocation": "Standort angeben",
+        "country": "Land",
+        "pinCode": "Postleitzahl",
+        "state": "Bundesland",
+        "district": "Bezirk",
+        "area": "Bereich",
+        "lookup": "Nachschlagen",
+        "or": "oder",
+        "useCurrentLocation": "Aktuellen Standort verwenden",
+        "cancel": "Abbrechen",
+        "ok": "OK"
+    }
+}

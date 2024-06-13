@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Вземете местоположение",
+        "specifyLocation": "Посочете местоположение",
+        "country": "Държава",
+        "pinCode": "Пощенски код",
+        "state": "Щат",
+        "district": "Район",
+        "area": "Област",
+        "lookup": "Търсене",
+        "or": "или",
+        "useCurrentLocation": "Използвайте текущото местоположение",
+        "cancel": "Отказ",
+        "ok": "Добре"
+    }
+}

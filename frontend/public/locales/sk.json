@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Získať polohu",
+        "specifyLocation": "Určte polohu",
+        "country": "Krajina",
+        "pinCode": "PSČ",
+        "state": "Štát",
+        "district": "Okres",
+        "area": "Oblasť",
+        "lookup": "Vyhľadať",
+        "or": "alebo",
+        "useCurrentLocation": "Použiť aktuálnu polohu",
+        "cancel": "Zrušiť",
+        "ok": "OK"
+    }
+}

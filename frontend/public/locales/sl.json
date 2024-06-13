@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Dobi lokacijo",
+        "specifyLocation": "Določite lokacijo",
+        "country": "Država",
+        "pinCode": "Poštna številka",
+        "state": "Država",
+        "district": "Okrožje",
+        "area": "Območje",
+        "lookup": "Iskanje",
+        "or": "ali",
+        "useCurrentLocation": "Uporabi trenutno lokacijo",
+        "cancel": "Prekliči",
+        "ok": "V redu"
+    }
+}

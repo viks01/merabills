@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Добиј локацију",
+        "specifyLocation": "Одредите локацију",
+        "country": "Земља",
+        "pinCode": "Поштански број",
+        "state": "Држава",
+        "district": "Округ",
+        "area": "Област",
+        "lookup": "Претрага",
+        "or": "или",
+        "useCurrentLocation": "Користи тренутну локацију",
+        "cancel": "Откажи",
+        "ok": "У реду"
+    }
+}

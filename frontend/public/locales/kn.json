@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "ಸ್ಥಳವನ್ನು ಪಡೆಯಿರಿ",
+        "specifyLocation": "ಸ್ಥಳವನ್ನು ನಿಗದಿಪಡಿಸಿ",
+        "country": "ದೇಶ",
+        "pinCode": "ಪಿನ್ ಕೋಡ್",
+        "state": "ರಾಜ್ಯ",
+        "district": "ಜಿಲ್ಲೆ",
+        "area": "ಪ್ರದೇಶ",
+        "lookup": "ಹುಡುಕಿ",
+        "or": "ಅಥವಾ",
+        "useCurrentLocation": "ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಬಳಸಿ",
+        "cancel": "ರದ್ದುಮಾಡು",
+        "ok": "ಸರಿ"
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "위치 가져오기",
+        "specifyLocation": "위치 지정",
+        "country": "국가",
+        "pinCode": "우편번호",
+        "state": "주",
+        "district": "지구",
+        "area": "지역",
+        "lookup": "조회",
+        "or": "또는",
+        "useCurrentLocation": "현재 위치 사용",
+        "cancel": "취소",
+        "ok": "확인"
+    }
+}

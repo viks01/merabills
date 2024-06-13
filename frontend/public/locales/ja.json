@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "位置を取得",
+        "specifyLocation": "位置を指定",
+        "country": "国",
+        "pinCode": "郵便番号",
+        "state": "州",
+        "district": "地区",
+        "area": "エリア",
+        "lookup": "検索",
+        "or": "または",
+        "useCurrentLocation": "現在の位置を使用",
+        "cancel": "キャンセル",
+        "ok": "OK"
+    }
+}

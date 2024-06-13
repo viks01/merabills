@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Hae sijainti",
+        "specifyLocation": "Määritä sijainti",
+        "country": "Maa",
+        "pinCode": "Postinumero",
+        "state": "Osavaltio",
+        "district": "Alue",
+        "area": "Alue",
+        "lookup": "Etsi",
+        "or": "tai",
+        "useCurrentLocation": "Käytä nykyistä sijaintia",
+        "cancel": "Peruuta",
+        "ok": "OK"
+    }
+}

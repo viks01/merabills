@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "获取位置",
+        "specifyLocation": "指定位置",
+        "country": "国家",
+        "pinCode": "邮政编码",
+        "state": "州",
+        "district": "区",
+        "area": "区域",
+        "lookup": "查找",
+        "or": "或",
+        "useCurrentLocation": "使用当前位置",
+        "cancel": "取消",
+        "ok": "确定"
+    }
+}

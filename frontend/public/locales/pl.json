@@ -1,0 +1,16 @@
+{
+    "locationForm": {
+        "getLocation": "Uzyskaj lokalizację",
+        "specifyLocation": "Określ lokalizację",
+        "country": "Kraj",
+        "pinCode": "Kod pocztowy",
+        "state": "Stan",
+        "district": "Dzielnica",
+        "area": "Obszar",
+        "lookup": "Szukaj",
+        "or": "lub",
+        "useCurrentLocation": "Użyj bieżącej lokalizacji",
+        "cancel": "Anuluj",
+        "ok": "OK"
+    }
+}
