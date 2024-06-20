@@ -39,6 +39,7 @@ function LocationForm() {
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     const [lookupPerformed, setLookupPerformed] = useState(false);
+    // const [countryList, setCountryList] = useState<JSX.Element[]>([]);
     const [countryList, setCountryList] = useState([]);
 
     useEffect(() => {
@@ -46,7 +47,10 @@ function LocationForm() {
         const currentLocale = i18n.language;
         const countriesForLocale = countries[currentLocale];
         const countryItems = Object.entries(countriesForLocale).map(([code, name]) => (
-            <MenuItem key={code} value={code}>{name}</MenuItem>
+            <MenuItem key={code} value={code}>
+                {/* <Typography>{name as string}</Typography> */}
+                <Typography>{name}</Typography>
+            </MenuItem>
         ));
         setCountryList(countryItems);
     }, [i18n.language]);
