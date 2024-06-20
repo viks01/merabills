@@ -3,28 +3,28 @@ import React, { useState } from 'react';
 import FilterChips, { Option } from './components/FilterChips';
 import { CssBaseline } from '@mui/material';
 
-// export class Option {
-//     constructor(public readonly title: string, public readonly key: number, public readonly iconName: string) { }
-// }
 
 const App: React.FC = () => {
   const [selectedKeys, setSelectedKeys] = useState<ReadonlyArray<number>>([]);
+  const multiSelectedAllowed = false;
+  const defaultSelection: ReadonlyArray<number> = [2];
+
   const options: ReadonlyArray<Option> = [
-    new Option("Home", 1, "home"),
-    new Option("Settings", 2, "settings"),
-    new Option("Info", 3, "info"),
+    new Option("Home", 1, "home", 'primary'),
+    new Option("Settings", 2, "settings", 'secondary'),
+    new Option("Info", 3, "info", 'success'),
   ];
-  const multiSelectedAllowed = true;
 
   return (
     <div className="App">
       <CssBaseline />
       {/* <LocationForm /> */}
-      <FilterChips 
-        options={options} 
-        selectedKeys={selectedKeys} 
-        setSelectedKeys={setSelectedKeys} 
-        multiSelectedAllowed={multiSelectedAllowed} 
+      <FilterChips
+        options={options}
+        selectedKeys={selectedKeys}
+        setSelectedKeys={setSelectedKeys}
+        multiSelectedAllowed={multiSelectedAllowed}
+        defaultSelection={defaultSelection}
       />
     </div>
   );
