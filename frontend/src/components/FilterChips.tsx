@@ -9,6 +9,7 @@ export class Option {
         public readonly key: number,
         public readonly iconName: string,
         public readonly color: ChipProps['color'] = 'default',
+        public readonly position: google.maps.LatLngLiteral
     ) { }
 }
 
