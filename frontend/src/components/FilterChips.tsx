@@ -1,7 +1,6 @@
-import { useEffect } from "react";
-// import { SvgFileIcon } from "./appTheme";
-import { Icon, Chip, ChipProps, Avatar } from "@mui/material";
-import CheckIcon from '@mui/icons-material/Check';
+import { useEffect, useState } from "react";
+import { Icon, Chip, ChipProps, Avatar, useMediaQuery, Dialog, DialogTitle, DialogContent, DialogActions, Button, useTheme, IconButton } from "@mui/material";
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 
 export class Option {
@@ -19,14 +18,16 @@ export default function FilterChips({
     selectedKeys,
     setSelectedKeys,
     multiSelectedAllowed,
-    defaultSelection,
 }: {
     options: ReadonlyArray<Option>;
     selectedKeys: ReadonlyArray<number>;
     setSelectedKeys: (selectedKeys: ReadonlyArray<number>) => void;
     multiSelectedAllowed: boolean;
-    defaultSelection: ReadonlyArray<number>;
 }): JSX.Element {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+    const [open, setOpen] = useState(false);
+
     const handleSelect = (key: number) => {
         if (selectedKeys.includes(key)) {
             setSelectedKeys(selectedKeys.filter((k) => k !== key));
@@ -35,30 +36,26 @@ export default function FilterChips({
         }
     };
 
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     useEffect(() => {
-        if (selectedKeys.length === 0) {
-            setSelectedKeys(defaultSelection);
-        }
         console.log(selectedKeys);
     }, [selectedKeys]);
 
-    return (
+    const chips = (
         <div>
             {options.map((option) => { 
                 const isSelected = selectedKeys.includes(option.key);
                 return (
                     <Chip
                         key={option.key}
-                        // icon={
-                        //     isSelected
-                        //         ? <CheckIcon />
-                        //         : <Icon>{option.iconName}</Icon>
-                        // }
-                        avatar={
-                            isSelected
-                                ? <Avatar><CheckIcon /></Avatar>
-                                : <Avatar><Icon>{option.iconName}</Icon></Avatar>
-                        }
+                        avatar={<Avatar><Icon>{option.iconName}</Icon></Avatar>}
                         label={option.title}
                         onClick={() => handleSelect(option.key)}
                         color={option.color}
@@ -72,4 +69,24 @@ export default function FilterChips({
             })}
         </div>
     );
+
+    return isSmallScreen ? (
+        <>
+            {/* <Button onClick={handleOpen}>
+                <Icon>filter_list</Icon>
+            </Button> */}
+            <IconButton onClick={handleOpen}>
+                <FilterListIcon />
+            </IconButton>
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Filter</DialogTitle>
+                <DialogContent>
+                    {chips}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>OK</Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    ) : chips;
 }

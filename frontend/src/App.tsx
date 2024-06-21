@@ -7,7 +7,6 @@ import { CssBaseline } from '@mui/material';
 const App: React.FC = () => {
   const [selectedKeys, setSelectedKeys] = useState<ReadonlyArray<number>>([]);
   const multiSelectedAllowed = false;
-  const defaultSelection: ReadonlyArray<number> = [2];
 
   const options: ReadonlyArray<Option> = [
     new Option("Home", 1, "home", 'primary'),
@@ -24,7 +23,6 @@ const App: React.FC = () => {
         selectedKeys={selectedKeys}
         setSelectedKeys={setSelectedKeys}
         multiSelectedAllowed={multiSelectedAllowed}
-        defaultSelection={defaultSelection}
       />
     </div>
   );
