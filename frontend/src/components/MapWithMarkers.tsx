@@ -24,11 +24,11 @@ const center = {
 };
 
 // Replace 'YOUR_MAP_ID' with your actual Map ID obtained from the Google Cloud Console
-const MAP_ID = 'cfc96df6676c95e7';
+const MAP_ID = 'YOUR_MAP_ID';
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerOptions }) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'AIzaSyDCzubYW6eVdZMqyp4ETXAOQaKEvdk9Mh4',
+    googleMapsApiKey: 'YOUR_API_KEY',
     libraries: ['marker'],
     mapIds: [MAP_ID],
   });
@@ -87,8 +87,6 @@ const AdvancedMarkerElement: React.FC<{
     });
 
     marker.map = map; // Associate the marker with the map
-
-    console.log('Marker added:', marker);
 
     return () => {
       marker.map = null; // Remove marker from the map
