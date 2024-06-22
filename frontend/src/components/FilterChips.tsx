@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
-import { Icon, Chip, ChipProps, Avatar, useMediaQuery, Dialog, DialogTitle, DialogContent, DialogActions, Button, useTheme, IconButton } from "@mui/material";
+import { Chip, Avatar, DialogTitle, DialogContent, DialogActions, Button, useTheme, IconButton, ColorPaletteProp } from '@mui/joy';
+import { Icon, Dialog, useMediaQuery } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
-
 
 export class Option {
     constructor(
         public readonly title: string,
         public readonly key: number,
         public readonly iconName: string,
-        public readonly color: ChipProps['color'] = 'default',
+        public readonly color: 'primary' | 'success' | 'warning' | 'neutral' | 'danger',
         public readonly position: google.maps.LatLngLiteral
     ) { }
 }
-
 
 export default function FilterChips({
     options,
@@ -51,21 +50,21 @@ export default function FilterChips({
 
     const chips = (
         <div>
-            {options.map((option) => { 
+            {options.map((option) => {
                 const isSelected = selectedKeys.includes(option.key);
                 return (
                     <Chip
                         key={option.key}
-                        avatar={<Avatar><Icon>{option.iconName}</Icon></Avatar>}
-                        label={option.title}
+                        startDecorator={<Avatar><Icon>{option.iconName}</Icon></Avatar>}
                         onClick={() => handleSelect(option.key)}
-                        color={option.color}
-                        variant={isSelected ? 'filled' : 'outlined'}
+                        color={option.color as ColorPaletteProp}
+                        variant={isSelected ? 'solid' : 'outlined'}
+                        component="div"
                         sx={{
                             m: 0.5,
                             backgroundColor: isSelected ? `${option.color}darker` : undefined,
                         }}
-                    />
+                    >{option.title}</Chip>
                 );
             })}
         </div>
@@ -73,9 +72,6 @@ export default function FilterChips({
 
     return isSmallScreen ? (
         <>
-            {/* <Button onClick={handleOpen}>
-                <Icon>filter_list</Icon>
-            </Button> */}
             <IconButton onClick={handleOpen}>
                 <FilterListIcon />
             </IconButton>
