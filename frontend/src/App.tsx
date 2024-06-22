@@ -19,7 +19,7 @@ const App: React.FC = () => {
     key: option.key,
     position: option.position,
     title: option.title,
-    icon: `https://maps.google.com/mapfiles/ms/icons/red-dot.png`,
+    icon: `https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi-dotless_hdpi.png`,
   }));
 
   return (
