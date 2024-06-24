@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
+import { Button, CssBaseline, SvgIcon } from '@mui/material';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FilterChips, { Option } from './components/FilterChips';
 import MapDialog from './components/MapDialog';
-import CssBaseline from '@mui/joy/CssBaseline';
-import Button from '@mui/joy/Button';
-import { SvgIcon } from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const App: React.FC = () => {
   const [selectedKeys, setSelectedKeys] = useState<ReadonlyArray<number>>([]);
@@ -13,7 +11,7 @@ const App: React.FC = () => {
 
   const options: ReadonlyArray<Option> = [
     new Option("John", 1, "person", 'primary', { lat: 40.712776, lng: -74.005974 }),
-    new Option("Jane", 2, "person", 'neutral', { lat: 34.052235, lng: -118.243683 }),
+    new Option("Jane", 2, "person", 'warning', { lat: 34.052235, lng: -118.243683 }),
     new Option("Doe", 3, "person", 'success', { lat: 41.878113, lng: -87.629799 }),
   ];
 
@@ -27,7 +25,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <CssBaseline />
-      <Button variant="solid" color="primary" onClick={() => setMapOpen(true)}>
+      <Button variant="contained" color="primary" onClick={() => setMapOpen(true)}>
         Show Map
       </Button>
       <MapDialog

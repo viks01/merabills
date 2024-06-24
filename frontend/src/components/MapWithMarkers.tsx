@@ -23,11 +23,11 @@ const center = {
   lng: -74.0,
 };
 
-const MAP_ID = 'cfc96df6676c95e7';
+const MAP_ID = 'YOUR_MAP_ID';
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerOptions }) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'AIzaSyDCzubYW6eVdZMqyp4ETXAOQaKEvdk9Mh4',
+    googleMapsApiKey: 'YOUR_API_KEY',
     libraries: ['places'],
     mapIds: [MAP_ID],
   });

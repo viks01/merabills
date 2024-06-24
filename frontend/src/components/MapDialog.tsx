@@ -1,6 +1,5 @@
 import React from 'react';
-import { Dialog } from '@mui/material';
-import { DialogTitle, DialogContent } from '@mui/joy';
+import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import MapWithMarkers, { MarkerOption } from './MapWithMarkers';
 
 interface MapDialogProps {
