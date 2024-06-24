@@ -8,14 +8,16 @@ interface MapDialogProps {
   onClose: () => void;
   selectedKeys: ReadonlyArray<number>;
   markerOptions: ReadonlyArray<MarkerOption>;
+  children?: React.ReactNode;
 }
 
-const MapDialog: React.FC<MapDialogProps> = ({ open, onClose, selectedKeys, markerOptions }) => {
+const MapDialog: React.FC<MapDialogProps> = ({ open, onClose, selectedKeys, markerOptions, children }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Map</DialogTitle>
       <DialogContent>
         <MapWithMarkers selectedKeys={selectedKeys} markerOptions={markerOptions} />
+        {children}
       </DialogContent>
     </Dialog>
   );

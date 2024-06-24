@@ -25,12 +25,12 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <CssBaseline />
-      <FilterChips
+      {/* <FilterChips
         options={options}
         selectedKeys={selectedKeys}
         setSelectedKeys={setSelectedKeys}
         multiSelectedAllowed={multiSelectedAllowed}
-      />
+      /> */}
       <Button variant="solid" color="primary" onClick={() => setMapOpen(true)}>
         Show Map
       </Button>
@@ -39,7 +39,14 @@ const App: React.FC = () => {
         onClose={() => setMapOpen(false)}
         selectedKeys={selectedKeys}
         markerOptions={markerOptions}
-      />
+      >
+        <FilterChips
+          options={options}
+          selectedKeys={selectedKeys}
+          setSelectedKeys={setSelectedKeys}
+          multiSelectedAllowed={multiSelectedAllowed}
+        />
+      </MapDialog>
     </div>
   );
 }
