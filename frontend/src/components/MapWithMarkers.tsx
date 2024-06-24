@@ -1,11 +1,11 @@
 import React, { useRef, useEffect } from 'react';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
 
 export interface MarkerOption {
   key: number;
   position: google.maps.LatLngLiteral;
   title: string;
-  icon: string;
+  icon: JSX.Element;
 }
 
 interface MapWithMarkersProps {
@@ -23,13 +23,12 @@ const center = {
   lng: -74.0,
 };
 
-// Replace 'YOUR_MAP_ID' with your actual Map ID obtained from the Google Cloud Console
-const MAP_ID = 'YOUR_MAP_ID';
+const MAP_ID = 'cfc96df6676c95e7';
 
 const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerOptions }) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'YOUR_API_KEY',
-    libraries: ['marker'],
+    googleMapsApiKey: 'AIzaSyDCzubYW6eVdZMqyp4ETXAOQaKEvdk9Mh4',
+    libraries: ['places'],
     mapIds: [MAP_ID],
   });
 
@@ -37,9 +36,10 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerOpt
 
   useEffect(() => {
     if (mapRef.current && selectedKeys.length > 0) {
+      const filteredMarkers = markerOptions.filter(option => selectedKeys.includes(option.key));
       console.log('Filtered Markers:', filteredMarkers);
     }
-  }, [selectedKeys]);
+  }, [selectedKeys, markerOptions]);
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -57,46 +57,15 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerOpt
       }}
     >
       {filteredMarkers.map(option => (
-        <AdvancedMarkerElement
+        <MarkerF
           key={option.key}
           position={option.position}
           title={option.title}
-          icon={option.icon}
-          map={mapRef.current}
-        />
+        >
+          {option.icon}
+        </MarkerF>
       ))}
     </GoogleMap>
-  );
-};
-
-const AdvancedMarkerElement: React.FC<{
-  position: google.maps.LatLngLiteral;
-  title: string;
-  icon: string;
-  map: google.maps.Map | null;
-}> = ({ position, title, icon, map }) => {
-  const markerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!markerRef.current || !map) return;
-
-    const marker = new google.maps.marker.AdvancedMarkerElement({
-      position,
-      title,
-      content: markerRef.current,
-    });
-
-    marker.map = map; // Associate the marker with the map
-
-    return () => {
-      marker.map = null; // Remove marker from the map
-    };
-  }, [position, title, map]);
-
-  return (
-    <div ref={markerRef} style={{ display: 'none' }}>
-      <img src={icon} alt={title} />
-    </div>
   );
 };
 

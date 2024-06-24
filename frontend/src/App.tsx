@@ -3,6 +3,8 @@ import FilterChips, { Option } from './components/FilterChips';
 import MapDialog from './components/MapDialog';
 import CssBaseline from '@mui/joy/CssBaseline';
 import Button from '@mui/joy/Button';
+import { SvgIcon } from '@mui/material';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const App: React.FC = () => {
   const [selectedKeys, setSelectedKeys] = useState<ReadonlyArray<number>>([]);
@@ -19,18 +21,12 @@ const App: React.FC = () => {
     key: option.key,
     position: option.position,
     title: option.title,
-    icon: `https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi-dotless_hdpi.png`,
+    icon: <SvgIcon component={LocationOnIcon} />,
   }));
 
   return (
     <div className="App">
       <CssBaseline />
-      {/* <FilterChips
-        options={options}
-        selectedKeys={selectedKeys}
-        setSelectedKeys={setSelectedKeys}
-        multiSelectedAllowed={multiSelectedAllowed}
-      /> */}
       <Button variant="solid" color="primary" onClick={() => setMapOpen(true)}>
         Show Map
       </Button>
