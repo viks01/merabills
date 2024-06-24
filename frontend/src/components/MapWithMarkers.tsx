@@ -5,7 +5,7 @@ export interface MarkerOption {
   key: number;
   position: google.maps.LatLngLiteral;
   title: string;
-  icon: JSX.Element;
+  icon: React.JSX.Element;
 }
 
 interface MapWithMarkersProps {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Icon, IconButton, useTheme, useMediaQuery } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
@@ -9,7 +9,7 @@ export class Option {
         public readonly iconName: string,
         public readonly color: string,
         public readonly position: google.maps.LatLngLiteral
-    ) { }
+    ) {}
 }
 
 export default function FilterChips({
@@ -22,7 +22,7 @@ export default function FilterChips({
     selectedKeys: ReadonlyArray<number>;
     setSelectedKeys: (selectedKeys: ReadonlyArray<number>) => void;
     multiSelectedAllowed: boolean;
-}): JSX.Element {
+}): React.JSX.Element {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
     const [open, setOpen] = useState(false);
