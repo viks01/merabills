@@ -42,8 +42,9 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerSet
 
   const filteredMarkerSets = markerSets.filter(markerSet => selectedKeys.includes(markerSet.filterChipOption.key));
 
-  const filteredMarkers = filteredMarkerSets.flatMap(markerSet => markerSet.markers.map(marker => ({
-    key: markerSet.filterChipOption.key,
+  const filteredMarkers = filteredMarkerSets.flatMap(markerSet => markerSet.markers.map((marker, markerIndex) => ({
+    // key: markerSet.filterChipOption.key,
+    key: `${markerSet.filterChipOption.key}-${markerIndex}`,
     latLong: marker.latLong,
     title: markerSet.filterChipOption.title,
     icon: marker.component,

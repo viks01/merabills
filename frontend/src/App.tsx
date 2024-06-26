@@ -18,6 +18,9 @@ const App: React.FC = () => {
     new MarkerImpl(new LatLong(40.712776, -74.005974), <SvgIcon component={LocationOnIcon} />),
     new MarkerImpl(new LatLong(34.052235, -118.243683), <SvgIcon component={LocationOnIcon} />),
     new MarkerImpl(new LatLong(41.878113, -87.629799), <SvgIcon component={LocationOnIcon} />),
+    new MarkerImpl(new LatLong(29.760427, -95.369804), <SvgIcon component={LocationOnIcon} />),
+    new MarkerImpl(new LatLong(33.448376, -112.074036), <SvgIcon component={LocationOnIcon} />),
+    new MarkerImpl(new LatLong(37.774929, -122.419418), <SvgIcon component={LocationOnIcon} />),
   ];
 
   const filterChipOptions: ReadonlyArray<FilterChipOption> = [
@@ -27,9 +30,9 @@ const App: React.FC = () => {
   ];
 
   const markerSets: ReadonlyArray<MarkerSet> = [
-    new MarkerSet(filterChipOptions[0], [markers[0]]),
-    new MarkerSet(filterChipOptions[1], [markers[1]]),
-    new MarkerSet(filterChipOptions[2], [markers[2]]),
+    new MarkerSet(filterChipOptions[0], [markers[0], markers[3]]),
+    new MarkerSet(filterChipOptions[1], [markers[1], markers[4]]),
+    new MarkerSet(filterChipOptions[2], [markers[2], markers[5]]),
   ];
 
   return (
