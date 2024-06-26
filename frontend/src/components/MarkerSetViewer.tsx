@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import MapWithMarkers from "./MapWithMarkers";
 import { MarkerSet } from "./MarkerSet";
 import FilterChips from "./FilterChips";
@@ -11,7 +12,7 @@ export default function MarkerSetViewer({
         markerSets: ReadonlyArray<MarkerSet>
     }): React.JSX.Element {
     const [selectedKeys, setSelectedKeys] = useState<ReadonlyArray<number>>([]);
-    // setSelectedKeys(markerSets.map(markerSet => markerSet.filterChipOption.key));
+
     useEffect(() => {
         const initialSelectedKeys = markerSets.map(markerSet => markerSet.filterChipOption.key);
         setSelectedKeys(initialSelectedKeys);

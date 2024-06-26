@@ -1,18 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
-import { MarkerSet } from './MarkerSet';
-// import { LatLong } from './LatLong';
 
-// export interface MarkerOption {
-//   key: number;
-//   position: google.maps.LatLngLiteral;
-//   title: string;
-//   icon: React.JSX.Element;
-// }
+import { MarkerSet } from './MarkerSet';
 
 interface MapWithMarkersProps {
   selectedKeys: ReadonlyArray<number>;
-  // markerOptions: ReadonlyArray<MarkerOption>;
   markerSets: ReadonlyArray<MarkerSet>;
 }
 
@@ -49,7 +41,6 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerSet
   }
 
   const filteredMarkerSets = markerSets.filter(markerSet => selectedKeys.includes(markerSet.filterChipOption.key));
-  // const filteredMarkers = filteredMarkerSets.flatMap(markerSet => markerSet.markers);
 
   const filteredMarkers = filteredMarkerSets.flatMap(markerSet => markerSet.markers.map(marker => ({
     key: markerSet.filterChipOption.key,

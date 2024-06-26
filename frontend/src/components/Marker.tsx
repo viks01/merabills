@@ -1,4 +1,5 @@
 import React from "react";
+
 import { LatLong } from "./LatLong";
 
 export interface Marker {
@@ -7,8 +8,5 @@ export interface Marker {
 }
 
 export class MarkerImpl implements Marker {
-    constructor(public readonly latLong: LatLong, public readonly component: React.JSX.Element) {
-        this.latLong = latLong;
-        this.component = component;
-    }
+    constructor(public readonly latLong: LatLong, public readonly component: React.JSX.Element) {}
 }
