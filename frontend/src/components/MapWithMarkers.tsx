@@ -1,20 +1,23 @@
 import React, { useRef, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
+import { MarkerSet } from './MarkerSet';
+// import { LatLong } from './LatLong';
 
-export interface MarkerOption {
-  key: number;
-  position: google.maps.LatLngLiteral;
-  title: string;
-  icon: React.JSX.Element;
-}
+// export interface MarkerOption {
+//   key: number;
+//   position: google.maps.LatLngLiteral;
+//   title: string;
+//   icon: React.JSX.Element;
+// }
 
 interface MapWithMarkersProps {
   selectedKeys: ReadonlyArray<number>;
-  markerOptions: ReadonlyArray<MarkerOption>;
+  // markerOptions: ReadonlyArray<MarkerOption>;
+  markerSets: ReadonlyArray<MarkerSet>;
 }
 
 const containerStyle = {
-  width: '800px',
+  width: '850px',
   height: '600px',
 };
 
@@ -23,11 +26,11 @@ const center = {
   lng: -74.0,
 };
 
-const MAP_ID = 'YOUR_MAP_ID';
+const MAP_ID = 'cfc96df6676c95e7';
 
-const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerOptions }) => {
+const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerSets }) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'YOUR_API_KEY',
+    googleMapsApiKey: 'AIzaSyDCzubYW6eVdZMqyp4ETXAOQaKEvdk9Mh4',
     libraries: ['places'],
     mapIds: [MAP_ID],
   });
@@ -36,16 +39,24 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerOpt
 
   useEffect(() => {
     if (mapRef.current && selectedKeys.length > 0) {
-      const filteredMarkers = markerOptions.filter(option => selectedKeys.includes(option.key));
-      console.log('Filtered Markers:', filteredMarkers);
+      const filteredMarkerSets = markerSets.filter(markerSet => selectedKeys.includes(markerSet.filterChipOption.key));
+      console.log('Filtered Markers:', filteredMarkerSets);
     }
-  }, [selectedKeys, markerOptions]);
+  }, [selectedKeys, markerSets]);
 
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
 
-  const filteredMarkers = markerOptions.filter(option => selectedKeys.includes(option.key));
+  const filteredMarkerSets = markerSets.filter(markerSet => selectedKeys.includes(markerSet.filterChipOption.key));
+  // const filteredMarkers = filteredMarkerSets.flatMap(markerSet => markerSet.markers);
+
+  const filteredMarkers = filteredMarkerSets.flatMap(markerSet => markerSet.markers.map(marker => ({
+    key: markerSet.filterChipOption.key,
+    latLong: marker.latLong,
+    title: markerSet.filterChipOption.title,
+    icon: marker.component,
+  })));
 
   return (
     <GoogleMap
@@ -56,13 +67,13 @@ const MapWithMarkers: React.FC<MapWithMarkersProps> = ({ selectedKeys, markerOpt
         mapRef.current = map;
       }}
     >
-      {filteredMarkers.map(option => (
+      {filteredMarkers.map(marker => (
         <MarkerF
-          key={option.key}
-          position={option.position}
-          title={option.title}
+          key={marker.key}
+          position={new google.maps.LatLng(marker.latLong.lat, marker.latLong.long)}
+          title={marker.title}
         >
-          {option.icon}
+          {marker.icon}
         </MarkerF>
       ))}
     </GoogleMap>

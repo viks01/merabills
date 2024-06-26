@@ -1,5 +1,5 @@
-import { SvgIcon } from "material-ui";
+import React from "react";
 
 export class FilterChipOption {
-    constructor(public readonly key: number, public readonly title: string, public readonly icon: SvgIcon) {}
+    constructor(public readonly key: number, public readonly title: string, public readonly icon: React.JSX.Element) {}
 }
