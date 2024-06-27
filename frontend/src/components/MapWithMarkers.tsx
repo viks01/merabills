@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
 
-import { MarkerSet } from './MarkerSet';
+import { MarkerSet } from '../model/MarkerSet';
 
 interface MapWithMarkersProps {
   selectedKeys: ReadonlyArray<number>;

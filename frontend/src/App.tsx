@@ -3,12 +3,16 @@ import { Button, CssBaseline, SvgIcon } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Person } from '@mui/icons-material';
 
+import { FilterChipOption } from './model/FilterChipOption';
+import { LatLong } from './model/LatLong';
+import { Marker, MarkerImpl } from './model/Marker';
+import { MarkerSet } from './model/MarkerSet';
+
 import MapDialog from './components/MapDialog';
-import { FilterChipOption } from './components/FilterChipOption';
-import { LatLong } from './components/LatLong';
-import { Marker, MarkerImpl } from './components/Marker';
-import { MarkerSet } from './components/MarkerSet';
 import MarkerSetViewer from './components/MarkerSetViewer';
+
+import { Field, FieldType, FieldValueType } from './model/Field';
+import CreateUpdateDialog from './components/CreateUpdateDialog';
 
 const App: React.FC = () => {
   const [mapOpen, setMapOpen] = useState(false);
@@ -35,6 +39,23 @@ const App: React.FC = () => {
     new MarkerSet(filterChipOptions[2], [markers[2], markers[5]]),
   ];
 
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+
+  const fields = [
+    new Field('Name', FieldValueType.STRING, '', true, false),
+    new Field('Description', FieldValueType.STRING, '', false, false),
+    new Field('Date', FieldValueType.DATE, new Date(), false, false),
+    new Field('Amount', FieldValueType.NUMBER, 0, true, false),
+  ];
+
+  const handleDialogSubmit = async (data: Record<string, FieldType>) => {
+    // Simulate async operation
+    console.log(data);
+    return new Promise<void>((resolve) => setTimeout(resolve, 2000));
+  };
+
   return (
     <div className="App">
       <CssBaseline />
@@ -47,6 +68,20 @@ const App: React.FC = () => {
       >
         <MarkerSetViewer languageCode={languageCode} markerSets={markerSets} />
       </MapDialog>
+      <Button variant="contained" color="primary" onClick={() => { setDialogOpen(true); setIsUpdate(false); }}>
+        Open Create Dialog
+      </Button>
+      <Button variant="contained" color="secondary" onClick={() => { setDialogOpen(true); setIsUpdate(true); }}>
+        Open Update Dialog
+      </Button>
+      <CreateUpdateDialog
+        type="Entity"
+        isUpdate={isUpdate}
+        fields={fields}
+        onSubmit={handleDialogSubmit}
+        onClose={() => setDialogOpen(false)}
+        open={dialogOpen}
+      />
     </div>
   );
 }

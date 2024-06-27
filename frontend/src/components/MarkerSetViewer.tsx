@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 import MapWithMarkers from "./MapWithMarkers";
-import { MarkerSet } from "./MarkerSet";
+import { MarkerSet } from "../model/MarkerSet";
 import FilterChips from "./FilterChips";
-import { FilterChipOption } from "./FilterChipOption";
+import { FilterChipOption } from "../model/FilterChipOption";
 
 export default function MarkerSetViewer({
     languageCode,

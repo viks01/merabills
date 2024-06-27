@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, useTheme, useMediaQuery } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
-import { FilterChipOption } from "./FilterChipOption";
+import { FilterChipOption } from "../model/FilterChipOption";
 
 export default function FilterChips({
     options,
