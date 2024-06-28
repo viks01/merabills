@@ -15,6 +15,7 @@ import { Field, FieldType, FieldValueType } from './model/Field';
 import CreateUpdateDialog from './components/CreateUpdateDialog';
 
 const App: React.FC = () => {
+  // Map controls
   const [mapOpen, setMapOpen] = useState(false);
   const languageCode: string = "en-US";
 
@@ -39,7 +40,7 @@ const App: React.FC = () => {
     new MarkerSet(filterChipOptions[2], [markers[2], markers[5]]),
   ];
 
-
+  // Dialog controls
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -48,6 +49,8 @@ const App: React.FC = () => {
     new Field('Description', FieldValueType.STRING, '', false, false),
     new Field('Date', FieldValueType.DATE, new Date(), false, false),
     new Field('Amount', FieldValueType.NUMBER, 0, true, false),
+    new Field('Active', FieldValueType.BOOLEAN, false, true, false),
+    new Field('Settings', FieldValueType.MAP, new Map([['key1', 'value1'], ['key2', 'value2']]), false, true)
   ];
 
   const handleDialogSubmit = async (data: Record<string, FieldType>) => {
