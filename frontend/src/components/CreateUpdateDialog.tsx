@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress, Snackbar, 
-  Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, FilledTextFieldProps, OutlinedTextFieldProps, 
-  StandardTextFieldProps, TextFieldVariants, FormHelperText 
-} from '@mui/material';
-import { DatePicker } from '@mui/lab';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, IconButton, FormHelperText, FilledTextFieldProps, OutlinedTextFieldProps, StandardTextFieldProps, TextFieldVariants } from '@mui/material';
+import { DatePicker } from '@mui/lab'; // Assuming you're using @mui/lab for date picker
+import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
+import { JSX } from 'react/jsx-runtime';
 
 import { Field, FieldType, FieldValueType } from '../model/Field';
-import { JSX } from 'react/jsx-runtime';
 
 interface CreateUpdateDialogProps {
   type: string;
@@ -28,6 +25,34 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     setFormValues({ ...formValues, [name]: value });
   };
 
+  const handleMapChange = (fieldName: string, key: string, value: string) => {
+    const map = new Map(formValues[fieldName] as ReadonlyMap<string, string>);
+    map.set(key, value);
+    handleChange(fieldName, map);
+  };
+
+  const handleMapKeyChange = (fieldName: string, oldKey: string, newKey: string) => {
+    const map = new Map(formValues[fieldName] as ReadonlyMap<string, string>);
+    const value = map.get(oldKey);
+    if (value !== undefined) {
+      map.delete(oldKey);
+      map.set(newKey, value);
+    }
+    handleChange(fieldName, map);
+  };
+
+  const handleMapRemove = (fieldName: string, key: string) => {
+    const map = new Map(formValues[fieldName] as ReadonlyMap<string, string>);
+    map.delete(key);
+    handleChange(fieldName, map);
+  };
+
+  const handleMapAdd = (fieldName: string) => {
+    const map = new Map(formValues[fieldName] as ReadonlyMap<string, string>);
+    map.set('', '');
+    handleChange(fieldName, map);
+  };
+
   const validateFields = () => {
     const newFieldErrors: Record<string, string> = {};
 
@@ -42,9 +67,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   };
 
   const handleSubmit = async () => {
-    if (!validateFields()) {
-      return;
-    }
+    if (!validateFields()) return;
 
     setLoading(true);
     try {
@@ -116,20 +139,39 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 />
               );
             case FieldValueType.MAP:
-              const map = field.value as ReadonlyMap<string, string>;
+              const map = field.value as ReadonlyMap<string, string> || new Map();
+              console.log('Map: ' + map);
               return (
                 <div key={field.name} style={{ marginBottom: '16px' }}>
                   <FormLabel component="legend">{field.name}</FormLabel>
-                  {Array.from(map.entries()).map(([key, value]) => (
-                    <TextField
-                      key={key}
-                      label={key}
-                      value={value}
-                      disabled
-                      fullWidth
-                      margin="normal"
-                    />
+                  {Array.from(map.entries()).map(([key, value], index) => (
+                    <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                      <TextField
+                        label="Key"
+                        value={key}
+                        onChange={e => handleMapKeyChange(field.name, key, e.target.value)}
+                        disabled={loading}
+                        fullWidth
+                        margin="normal"
+                        style={{ marginRight: '8px' }}
+                      />
+                      <TextField
+                        label="Value"
+                        value={value}
+                        onChange={e => handleMapChange(field.name, key, e.target.value)}
+                        disabled={loading}
+                        fullWidth
+                        margin="normal"
+                        style={{ marginRight: '8px' }}
+                      />
+                      <IconButton onClick={() => handleMapRemove(field.name, key)} disabled={loading}>
+                        <RemoveIcon />
+                      </IconButton>
+                    </div>
                   ))}
+                  <Button onClick={() => handleMapAdd(field.name)} color="primary" disabled={loading}>
+                    <AddIcon /> Add Field
+                  </Button>
                 </div>
               );
             default:

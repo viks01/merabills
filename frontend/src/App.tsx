@@ -50,7 +50,7 @@ const App: React.FC = () => {
     new Field('Date', FieldValueType.DATE, new Date(), false, false),
     new Field('Amount', FieldValueType.NUMBER, 0, true, false),
     new Field('Active', FieldValueType.BOOLEAN, false, true, false),
-    new Field('Settings', FieldValueType.MAP, new Map([['key1', 'value1'], ['key2', 'value2']]), false, true)
+    new Field('Settings', FieldValueType.MAP, new Map([['URL', 'google.com'], ['Username', 'Foo']]), false, false)
   ];
 
   const handleDialogSubmit = async (data: Record<string, FieldType>) => {
