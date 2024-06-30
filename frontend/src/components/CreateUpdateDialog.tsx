@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, IconButton, FormHelperText, FilledTextFieldProps, OutlinedTextFieldProps, StandardTextFieldProps, TextFieldVariants } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, FormHelperText, FilledTextFieldProps, OutlinedTextFieldProps, StandardTextFieldProps, TextFieldVariants } from '@mui/material';
 import { DatePicker } from '@mui/lab'; // Assuming you're using @mui/lab for date picker
-import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
 import { JSX } from 'react/jsx-runtime';
 
-import { Field, FieldType, FieldValueType } from '../model/Field';
+import { Field, EditableField, FieldType, FieldValueType } from '../model/Field';
 
 interface CreateUpdateDialogProps {
   type: string;
   isUpdate: boolean;
-  fields: Field[];
+  fields: (EditableField | Field)[];
   onSubmit: (data: Record<string, FieldType>) => Promise<void>;
   onClose: () => void;
   open: boolean;
@@ -25,39 +24,11 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleMapChange = (fieldName: string, key: string, value: string) => {
-    const map = new Map(formValues[fieldName] as ReadonlyMap<string, string>);
-    map.set(key, value);
-    handleChange(fieldName, map);
-  };
-
-  const handleMapKeyChange = (fieldName: string, oldKey: string, newKey: string) => {
-    const map = new Map(formValues[fieldName] as ReadonlyMap<string, string>);
-    const value = map.get(oldKey);
-    if (value !== undefined) {
-      map.delete(oldKey);
-      map.set(newKey, value);
-    }
-    handleChange(fieldName, map);
-  };
-
-  const handleMapRemove = (fieldName: string, key: string) => {
-    const map = new Map(formValues[fieldName] as ReadonlyMap<string, string>);
-    map.delete(key);
-    handleChange(fieldName, map);
-  };
-
-  const handleMapAdd = (fieldName: string) => {
-    const map = new Map(formValues[fieldName] as ReadonlyMap<string, string>);
-    map.set('', '');
-    handleChange(fieldName, map);
-  };
-
   const validateFields = () => {
     const newFieldErrors: Record<string, string> = {};
 
     fields.forEach(field => {
-      if (field.required && !formValues[field.name]) {
+      if (field instanceof EditableField && field.required && !formValues[field.name]) {
         newFieldErrors[field.name] = `${field.name} is required`;
       }
     });
@@ -95,8 +66,8 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                   type={field.valueType === FieldValueType.NUMBER ? 'number' : 'text'}
                   value={formValues[field.name] || ''}
                   onChange={e => handleChange(field.name, field.valueType === FieldValueType.NUMBER ? parseFloat(e.target.value) : e.target.value)}
-                  required={field.required}
-                  disabled={field.readOnly || loading}
+                  required={field instanceof EditableField && field.required}
+                  disabled={!(field instanceof EditableField) || loading}
                   fullWidth
                   margin="normal"
                   error={!!fieldErrors[field.name]}
@@ -112,8 +83,8 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                     value={formValues[field.name] || false}
                     onChange={e => handleChange(field.name, e.target.value === 'true')}
                   >
-                    <FormControlLabel value={true} control={<Radio />} label="True" disabled={field.readOnly || loading} />
-                    <FormControlLabel value={false} control={<Radio />} label="False" disabled={field.readOnly || loading} />
+                    <FormControlLabel value={true} control={<Radio />} label="True" disabled={!(field instanceof EditableField) || loading} />
+                    <FormControlLabel value={false} control={<Radio />} label="False" disabled={!(field instanceof EditableField) || loading} />
                   </RadioGroup>
                   {fieldErrors[field.name] && <FormHelperText>{fieldErrors[field.name]}</FormHelperText>}
                 </FormControl>
@@ -124,12 +95,12 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                   key={field.name}
                   label={field.name}
                   value={formValues[field.name] || null}
-                  onChange={(date: string | number | boolean | Date | ReadonlyMap<string, string> | null) => handleChange(field.name, date)}
+                  onChange={(date: Date) => handleChange(field.name, date)}
                   renderInput={(params: JSX.IntrinsicAttributes & { variant?: TextFieldVariants | undefined; } & Omit<FilledTextFieldProps | OutlinedTextFieldProps | StandardTextFieldProps, "variant">) => (
                     <TextField
                       {...params}
-                      required={field.required}
-                      disabled={field.readOnly || loading}
+                      required={field instanceof EditableField && field.required}
+                      disabled={!(field instanceof EditableField) || loading}
                       fullWidth
                       margin="normal"
                       error={!!fieldErrors[field.name]}
@@ -137,42 +108,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                     />
                   )}
                 />
-              );
-            case FieldValueType.MAP:
-              const map = field.value as ReadonlyMap<string, string> || new Map();
-              console.log('Map: ' + map);
-              return (
-                <div key={field.name} style={{ marginBottom: '16px' }}>
-                  <FormLabel component="legend">{field.name}</FormLabel>
-                  {Array.from(map.entries()).map(([key, value], index) => (
-                    <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                      <TextField
-                        label="Key"
-                        value={key}
-                        onChange={e => handleMapKeyChange(field.name, key, e.target.value)}
-                        disabled={loading}
-                        fullWidth
-                        margin="normal"
-                        style={{ marginRight: '8px' }}
-                      />
-                      <TextField
-                        label="Value"
-                        value={value}
-                        onChange={e => handleMapChange(field.name, key, e.target.value)}
-                        disabled={loading}
-                        fullWidth
-                        margin="normal"
-                        style={{ marginRight: '8px' }}
-                      />
-                      <IconButton onClick={() => handleMapRemove(field.name, key)} disabled={loading}>
-                        <RemoveIcon />
-                      </IconButton>
-                    </div>
-                  ))}
-                  <Button onClick={() => handleMapAdd(field.name)} color="primary" disabled={loading}>
-                    <AddIcon /> Add Field
-                  </Button>
-                </div>
               );
             default:
               return null;

@@ -11,7 +11,7 @@ import { MarkerSet } from './model/MarkerSet';
 import MapDialog from './components/MapDialog';
 import MarkerSetViewer from './components/MarkerSetViewer';
 
-import { Field, FieldType, FieldValueType } from './model/Field';
+import { Field, EditableField, FieldType, FieldValueType } from './model/Field';
 import CreateUpdateDialog from './components/CreateUpdateDialog';
 
 const App: React.FC = () => {
@@ -45,12 +45,12 @@ const App: React.FC = () => {
   const [isUpdate, setIsUpdate] = useState(false);
 
   const fields = [
-    new Field('Name', FieldValueType.STRING, '', true, false),
-    new Field('Description', FieldValueType.STRING, '', false, false),
-    new Field('Date', FieldValueType.DATE, new Date(), false, false),
-    new Field('Amount', FieldValueType.NUMBER, 0, true, false),
-    new Field('Active', FieldValueType.BOOLEAN, false, true, false),
-    new Field('Settings', FieldValueType.MAP, new Map([['URL', 'google.com'], ['Username', 'Foo']]), false, false)
+    new EditableField('Name', FieldValueType.STRING, '', true, true),
+    new EditableField('Description', FieldValueType.STRING, '', true, false),
+    new EditableField('Date', FieldValueType.DATE, new Date(), true, false),
+    new EditableField('Amount', FieldValueType.NUMBER, 0, true, true),
+    new EditableField('Active', FieldValueType.BOOLEAN, false, true, true),
+    new Field('Static Info', FieldValueType.STRING, 'This is a static field', false)
   ];
 
   const handleDialogSubmit = async (data: Record<string, FieldType>) => {

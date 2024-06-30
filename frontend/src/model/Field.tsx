@@ -6,14 +6,37 @@ export enum FieldValueType {
     MAP = 4,
 }
 
-export type FieldType = string | boolean | number | Date | ReadonlyMap<string, string> | null;
+// export type FieldType = string | boolean | number | Date | ReadonlyMap<string, string> | null;
+
+// export class Field {
+//     constructor(
+//         public name: string,
+//         public valueType: FieldValueType,
+//         public value: FieldType | null,
+//         public required: boolean,
+//         public readOnly: boolean
+//     ) { }
+// }
+
+export type FieldType = string | boolean | number | Date;
 
 export class Field {
     constructor(
-        public name: string,
-        public valueType: FieldValueType,
-        public value: FieldType,
-        public required: boolean,
-        public readOnly: boolean
-    ) {}
+        public readonly name: string,
+        public readonly valueType: FieldValueType,
+        public readonly initialValue: FieldType | null,
+        public readonly isCustomField: boolean
+    ) { }
+}
+
+export class EditableField extends Field {
+    constructor(
+        public readonly name: string,
+        public readonly valueType: FieldValueType,
+        public readonly initialValue: FieldType | null,
+        public readonly isCustomField: boolean,
+        public readonly required: boolean
+    ) {
+        super(name, valueType, initialValue, isCustomField);
+    }
 }
