@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
   CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel,
-  FormControl, FormLabel, FormHelperText, FilledTextFieldProps,
-  OutlinedTextFieldProps, StandardTextFieldProps, TextFieldVariants
+  FormControl, FormLabel, FormHelperText, IconButton
 } from '@mui/material';
-import { DatePicker } from '@mui/lab'; // Assuming you're using @mui/lab for date picker
-import { JSX } from 'react/jsx-runtime';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AddOutlined, DeleteOutlined } from '@mui/icons-material';
 
 import { Field, EditableField, FieldType, FieldValueType } from '../model/Field';
+import dayjs, { Dayjs } from 'dayjs';
 
 interface CreateUpdateDialogProps {
   type: string;
@@ -24,6 +25,21 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [customFields, setCustomFields] = useState<(Field | EditableField)[]>([]);
+  const [regularFields, setRegularFields] = useState<(Field | EditableField)[]>([]);
+
+  useEffect(() => {
+    const initialValues: Record<string, FieldType> = {};
+    fields.forEach(field => {
+      if (field.initialValue !== null) {
+        initialValues[field.name] = field.initialValue;
+      }
+    });
+    setFormValues(initialValues);
+    setRegularFields(fields.filter(field => !field.isCustomField));
+    setCustomFields(fields.filter(field => field.isCustomField));
+    console.log(formValues);
+  }, [isUpdate, fields]);
 
   const handleChange = (name: string, value: FieldType) => {
     setFormValues({ ...formValues, [name]: value });
@@ -32,7 +48,13 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   const validateFields = () => {
     const newFieldErrors: Record<string, string> = {};
 
-    fields.forEach(field => {
+    regularFields.forEach(field => {
+      if (field instanceof EditableField && field.required && !formValues[field.name]) {
+        newFieldErrors[field.name] = `${field.name} is required`;
+      }
+    });
+
+    customFields.forEach(field => {
       if (field instanceof EditableField && field.required && !formValues[field.name]) {
         newFieldErrors[field.name] = `${field.name} is required`;
       }
@@ -40,6 +62,18 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
 
     setFieldErrors(newFieldErrors);
     return Object.keys(newFieldErrors).length === 0;
+  };
+
+  const handleAddField = () => {
+    const newField = new EditableField(`customField${customFields.length + 1}`, FieldValueType.STRING, "test", true, false);
+    setCustomFields([...customFields, newField]);
+  };
+
+  const handleDeleteField = (name: string) => {
+    setCustomFields(customFields.filter(field => field.name !== name));
+    setRegularFields(regularFields.filter(field => field.name !== name));
+    const { [name]: deletedValue, ...restFormValues } = formValues;
+    setFormValues(restFormValues);
   };
 
   const handleSubmit = async () => {
@@ -60,26 +94,38 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>{isUpdate ? `Update ${type}` : `Create ${type}`}</DialogTitle>
       <DialogContent>
-        {fields.map(field => {
+        {[...regularFields, ...customFields].map(field => {
+          const isEditable = field instanceof EditableField;
+          const isCustomField = field.isCustomField;
+
           switch (field.valueType) {
             case FieldValueType.STRING:
             case FieldValueType.NUMBER:
               return (
-                <TextField
-                  key={field.name}
-                  label={field.name}
-                  placeholder={field instanceof EditableField ? (field.required ? '(required)' : '') : field.initialValue?.toString()}
-                  type={field.valueType === FieldValueType.NUMBER ? 'number' : 'text'}
-                  value={field instanceof EditableField ? (formValues[field.name] || '') : field.initialValue?.toString()}
-                  onChange={e => handleChange(field.name, field.valueType === FieldValueType.NUMBER ? parseFloat(e.target.value) : e.target.value)}
-                  required={field instanceof EditableField && field.required}
-                  disabled={!(field instanceof EditableField) || loading}
-                  fullWidth
-                  margin="normal"
-                  InputLabelProps={{ shrink: true }}
-                  error={!!fieldErrors[field.name]}
-                  helperText={fieldErrors[field.name]}
-                />
+                <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
+                  <TextField
+                    label={field.name}
+                    placeholder={isEditable ? (field.required ? '(required)' : '') : field.initialValue?.toString()}
+                    type={field.valueType === FieldValueType.NUMBER ? 'number' : 'text'}
+                    value={isEditable ? (formValues[field.name] || '') : field.initialValue?.toString()}
+                    onChange={e => handleChange(field.name, field.valueType === FieldValueType.NUMBER ? parseFloat(e.target.value) : e.target.value)}
+                    required={isEditable && field.required}
+                    disabled={!isEditable || loading}
+                    fullWidth
+                    margin="normal"
+                    InputLabelProps={{ shrink: true }}
+                    error={!!fieldErrors[field.name]}
+                    helperText={fieldErrors[field.name]}
+                  />
+                  {isCustomField && (
+                    <IconButton
+                      onClick={() => handleDeleteField(field.name)}
+                      disabled={!isEditable || loading}
+                    >
+                      <DeleteOutlined />
+                    </IconButton>
+                  )}
+                </div>
               );
             case FieldValueType.BOOLEAN:
               return (
@@ -90,37 +136,65 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                     value={formValues[field.name] || false}
                     onChange={e => handleChange(field.name, e.target.value === 'true')}
                   >
-                    <FormControlLabel value={true} control={<Radio />} label="True" disabled={!(field instanceof EditableField) || loading} />
-                    <FormControlLabel value={false} control={<Radio />} label="False" disabled={!(field instanceof EditableField) || loading} />
+                    <FormControlLabel value={true} control={<Radio />} label="True" disabled={!isEditable || loading} />
+                    <FormControlLabel value={false} control={<Radio />} label="False" disabled={!isEditable || loading} />
                   </RadioGroup>
                   {fieldErrors[field.name] && <FormHelperText>{fieldErrors[field.name]}</FormHelperText>}
+                  {isCustomField && (
+                    <IconButton
+                      onClick={() => handleDeleteField(field.name)}
+                      disabled={!isEditable || loading}
+                    >
+                      <DeleteOutlined />
+                    </IconButton>
+                  )}
                 </FormControl>
               );
             case FieldValueType.DATE:
               return (
-                <DatePicker
-                  key={field.name}
-                  label={field.name}
-                  value={formValues[field.name] || null}
-                  onChange={(date: Date) => handleChange(field.name, date)}
-                  renderInput={(params: JSX.IntrinsicAttributes & { variant?: TextFieldVariants | undefined; } & Omit<FilledTextFieldProps | OutlinedTextFieldProps | StandardTextFieldProps, "variant">) => (
-                    <TextField
-                      {...params}
-                      required={field instanceof EditableField && field.required}
-                      disabled={!(field instanceof EditableField) || loading}
-                      fullWidth
-                      margin="normal"
-                      InputLabelProps={{ shrink: true }}
-                      error={!!fieldErrors[field.name]}
-                      helperText={fieldErrors[field.name]}
+                <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker 
+                      label={field.name} 
+                      value={formValues[field.name] ? dayjs(formValues[field.name].toString()) : null}
+                      onChange={(date: Dayjs | null) => handleChange(field.name, dayjs(date).toDate())}
+                      slotProps={{
+                        textField: {
+                          placeholder: isEditable ? (field.required ? '(required)' : '') : field.initialValue?.toString(),
+                          required: isEditable && field.required,
+                          disabled: !isEditable || loading,
+                          fullWidth: true,
+                          margin: "normal",
+                          error: !!fieldErrors[field.name],
+                          helperText: fieldErrors[field.name]
+                        },
+                      }}
                     />
+                  </LocalizationProvider>
+                  {isCustomField && (
+                    <IconButton
+                      onClick={() => handleDeleteField(field.name)}
+                      disabled={!isEditable || loading}
+                    >
+                      <DeleteOutlined />
+                    </IconButton>
                   )}
-                />
+                </div>
               );
             default:
               return null;
           }
         })}
+        <Button
+          onClick={handleAddField}
+          color="primary"
+          startIcon={<AddOutlined />}
+          disabled={loading}
+          fullWidth
+          style={{ marginTop: '1em' }}
+        >
+          Add Property
+        </Button>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary" disabled={loading}>
