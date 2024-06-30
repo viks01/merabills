@@ -68,9 +68,9 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 <TextField
                   key={field.name}
                   label={field.name}
-                  placeholder={field instanceof EditableField && field.required ? '(required)' : ''}
+                  placeholder={field instanceof EditableField ? (field.required ? '(required)' : '') : field.initialValue?.toString()}
                   type={field.valueType === FieldValueType.NUMBER ? 'number' : 'text'}
-                  value={formValues[field.name] || ''}
+                  value={field instanceof EditableField ? (formValues[field.name] || '') : field.initialValue?.toString()}
                   onChange={e => handleChange(field.name, field.valueType === FieldValueType.NUMBER ? parseFloat(e.target.value) : e.target.value)}
                   required={field instanceof EditableField && field.required}
                   disabled={!(field instanceof EditableField) || loading}
