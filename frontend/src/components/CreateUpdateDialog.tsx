@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, FormHelperText, FilledTextFieldProps, OutlinedTextFieldProps, StandardTextFieldProps, TextFieldVariants } from '@mui/material';
+import {
+  Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
+  CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel,
+  FormControl, FormLabel, FormHelperText, FilledTextFieldProps,
+  OutlinedTextFieldProps, StandardTextFieldProps, TextFieldVariants
+} from '@mui/material';
 import { DatePicker } from '@mui/lab'; // Assuming you're using @mui/lab for date picker
 import { JSX } from 'react/jsx-runtime';
 
@@ -63,6 +68,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 <TextField
                   key={field.name}
                   label={field.name}
+                  placeholder={field instanceof EditableField && field.required ? '(required)' : ''}
                   type={field.valueType === FieldValueType.NUMBER ? 'number' : 'text'}
                   value={formValues[field.name] || ''}
                   onChange={e => handleChange(field.name, field.valueType === FieldValueType.NUMBER ? parseFloat(e.target.value) : e.target.value)}
@@ -70,6 +76,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                   disabled={!(field instanceof EditableField) || loading}
                   fullWidth
                   margin="normal"
+                  InputLabelProps={{ shrink: true }}
                   error={!!fieldErrors[field.name]}
                   helperText={fieldErrors[field.name]}
                 />
@@ -103,6 +110,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                       disabled={!(field instanceof EditableField) || loading}
                       fullWidth
                       margin="normal"
+                      InputLabelProps={{ shrink: true }}
                       error={!!fieldErrors[field.name]}
                       helperText={fieldErrors[field.name]}
                     />
