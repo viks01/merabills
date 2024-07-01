@@ -3,7 +3,7 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
   CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel,
   FormControl, FormLabel, FormHelperText, IconButton, MenuItem, Select,
-  Collapse
+  Collapse, Checkbox
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -83,7 +83,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     setNewFieldName('');
     setNewFieldValueType(FieldValueType.STRING);
     setNewFieldRequired(false);
-    setIsAddFieldExpanded(false);
   };
 
   const handleDeleteField = (name: string) => {
@@ -149,7 +148,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 return (
                   <FormControl component="fieldset" key={field.name} margin="normal" fullWidth error={!!fieldErrors[field.name]}>
                     <FormLabel component="legend">{field.name}</FormLabel>
-                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <RadioGroup
                         row
                         value={formValues[field.name] || false}
@@ -216,17 +215,16 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
             Add Property
           </Button>
           <Collapse in={isAddFieldExpanded} style={{ border: '1px solid #ccc', padding: '1em', borderRadius: '4px', marginTop: '1em' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+            <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
               <TextField
                 label="Field Name"
                 value={newFieldName}
                 onChange={e => setNewFieldName(e.target.value)}
                 fullWidth
-                margin="normal"
               />
-              <FormControl fullWidth margin="normal">
-                <FormLabel>Value Type</FormLabel>
+              <FormControl fullWidth>
                 <Select
+                  label="Field Type"
                   value={newFieldValueType}
                   onChange={e => setNewFieldValueType(e.target.value as FieldValueType)}
                 >
@@ -238,34 +236,22 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
               </FormControl>
               <FormControlLabel
                 control={
-                  <Radio
+                  <Checkbox
                     checked={newFieldRequired}
                     onChange={e => setNewFieldRequired(e.target.checked)}
-                    color="primary"
                   />
                 }
                 label="Required"
               />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '1em', gap: '1em' }}>
-              <Button
-                onClick={handleToggleAddField}
+              <IconButton
                 color="primary"
-                disabled={loading}
-                variant="contained"
-              >
-                Cancel
-              </Button>
-              <Button
                 onClick={handleAddField}
-                color="primary"
-                disabled={loading}
-                variant="contained"
               >
-                Ok
-              </Button>
+                <AddOutlined />
+              </IconButton>
             </div>
           </Collapse>
+          {error && <Snackbar open={!!error} message={error} autoHideDuration={6000} onClose={() => setError(null)} />}
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="primary" disabled={loading}>
@@ -276,14 +262,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
           </Button>
         </DialogActions>
       </Dialog>
-      {error && (
-        <Snackbar
-          open={!!error}
-          autoHideDuration={6000}
-          onClose={() => setError(null)}
-          message={error}
-        />
-      )}
     </>
   );
 };
