@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
   CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel,
-  FormControl, FormLabel, FormHelperText, IconButton, MenuItem, Select
+  FormControl, FormLabel, FormHelperText, IconButton, MenuItem, Select,
+  Collapse
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -27,7 +28,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [customFields, setCustomFields] = useState<(Field | EditableField)[]>([]);
   const [regularFields, setRegularFields] = useState<(Field | EditableField)[]>([]);
-  const [addFieldDialogOpen, setAddFieldDialogOpen] = useState(false);
+  const [isAddFieldExpanded, setIsAddFieldExpanded] = useState(false);
   const [newFieldName, setNewFieldName] = useState('');
   const [newFieldValueType, setNewFieldValueType] = useState<FieldValueType>(FieldValueType.STRING);
   const [newFieldRequired, setNewFieldRequired] = useState(false);
@@ -67,15 +68,8 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     return Object.keys(newFieldErrors).length === 0;
   };
 
-  const handleOpenAddFieldDialog = () => {
-    setAddFieldDialogOpen(true);
-  };
-
-  const handleCloseAddFieldDialog = () => {
-    setAddFieldDialogOpen(false);
-    setNewFieldName('');
-    setNewFieldValueType(FieldValueType.STRING);
-    setNewFieldRequired(false);
+  const handleToggleAddField = () => {
+    setIsAddFieldExpanded(!isAddFieldExpanded);
   };
 
   const handleAddField = () => {
@@ -86,7 +80,10 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
 
     const newField = new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired);
     setCustomFields([...customFields, newField]);
-    handleCloseAddFieldDialog();
+    setNewFieldName('');
+    setNewFieldValueType(FieldValueType.STRING);
+    setNewFieldRequired(false);
+    setIsAddFieldExpanded(false);
   };
 
   const handleDeleteField = (name: string) => {
@@ -207,7 +204,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
             }
           })}
           <Button
-            onClick={handleOpenAddFieldDialog}
+            onClick={handleToggleAddField}
             color="primary"
             startIcon={<AddOutlined />}
             disabled={loading}
@@ -216,6 +213,55 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
           >
             Add Property
           </Button>
+          <Collapse in={isAddFieldExpanded} style={{ border: '1px solid #ccc', padding: '1em', borderRadius: '4px', marginTop: '1em' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+              <TextField
+                label="Field Name"
+                value={newFieldName}
+                onChange={e => setNewFieldName(e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <FormControl fullWidth margin="normal">
+                <FormLabel>Value Type</FormLabel>
+                <Select
+                  value={newFieldValueType}
+                  onChange={e => setNewFieldValueType(e.target.value as FieldValueType)}
+                >
+                  <MenuItem value={FieldValueType.STRING}>String</MenuItem>
+                  <MenuItem value={FieldValueType.NUMBER}>Number</MenuItem>
+                  <MenuItem value={FieldValueType.BOOLEAN}>Boolean</MenuItem>
+                  <MenuItem value={FieldValueType.DATE}>Date</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControlLabel
+                control={
+                  <Radio
+                    checked={newFieldRequired}
+                    onChange={e => setNewFieldRequired(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label="Required"
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '1em', gap: '1em' }}>
+              <Button
+                onClick={handleToggleAddField}
+                color="primary"
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddField}
+                color="primary"
+                disabled={loading}
+              >
+                Ok
+              </Button>
+            </div>
+          </Collapse>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="primary" disabled={loading}>
@@ -223,48 +269,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
           </Button>
           <Button onClick={handleSubmit} color="primary" disabled={loading}>
             {loading ? <CircularProgress size={24} /> : 'Ok'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={addFieldDialogOpen} onClose={handleCloseAddFieldDialog}>
-        <DialogTitle>Add Custom Property</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Field Name"
-            value={newFieldName}
-            onChange={e => setNewFieldName(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <FormControl fullWidth margin="normal">
-            <FormLabel>Value Type</FormLabel>
-            <Select
-              value={newFieldValueType}
-              onChange={e => setNewFieldValueType(e.target.value as FieldValueType)}
-            >
-              <MenuItem value={FieldValueType.STRING}>String</MenuItem>
-              <MenuItem value={FieldValueType.NUMBER}>Number</MenuItem>
-              <MenuItem value={FieldValueType.BOOLEAN}>Boolean</MenuItem>
-              <MenuItem value={FieldValueType.DATE}>Date</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControlLabel
-            control={
-              <Radio
-                checked={newFieldRequired}
-                onChange={e => setNewFieldRequired(e.target.checked)}
-                color="primary"
-              />
-            }
-            label="Required"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseAddFieldDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddField} color="primary">
-            Ok
           </Button>
         </DialogActions>
       </Dialog>
