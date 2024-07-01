@@ -207,9 +207,9 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
           <Button
             onClick={handleToggleAddField}
             color="primary"
+            variant="outlined"
             startIcon={<AddOutlined />}
             disabled={loading}
-            fullWidth
             style={{ marginTop: '1em' }}
           >
             Add Property
@@ -243,12 +243,13 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 }
                 label="Required"
               />
-              <IconButton
+              <Button
                 color="primary"
+                variant="contained"
                 onClick={handleAddField}
               >
-                <AddOutlined />
-              </IconButton>
+                Add
+              </Button>
             </div>
           </Collapse>
           {error && <Snackbar open={!!error} message={error} autoHideDuration={6000} onClose={() => setError(null)} />}
