@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
   CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel,
-  FormControl, FormLabel, FormHelperText, IconButton
+  FormControl, FormLabel, FormHelperText, IconButton, MenuItem, Select
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -27,6 +27,10 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [customFields, setCustomFields] = useState<(Field | EditableField)[]>([]);
   const [regularFields, setRegularFields] = useState<(Field | EditableField)[]>([]);
+  const [addFieldDialogOpen, setAddFieldDialogOpen] = useState(false);
+  const [newFieldName, setNewFieldName] = useState('');
+  const [newFieldValueType, setNewFieldValueType] = useState<FieldValueType>(FieldValueType.STRING);
+  const [newFieldRequired, setNewFieldRequired] = useState(false);
 
   useEffect(() => {
     const initialValues: Record<string, FieldType> = {};
@@ -38,7 +42,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     setFormValues(initialValues);
     setRegularFields(fields.filter(field => !field.isCustomField));
     setCustomFields(fields.filter(field => field.isCustomField));
-    console.log(formValues);
   }, [isUpdate, fields]);
 
   const handleChange = (name: string, value: FieldType) => {
@@ -64,9 +67,26 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     return Object.keys(newFieldErrors).length === 0;
   };
 
+  const handleOpenAddFieldDialog = () => {
+    setAddFieldDialogOpen(true);
+  };
+
+  const handleCloseAddFieldDialog = () => {
+    setAddFieldDialogOpen(false);
+    setNewFieldName('');
+    setNewFieldValueType(FieldValueType.STRING);
+    setNewFieldRequired(false);
+  };
+
   const handleAddField = () => {
-    const newField = new EditableField(`customField${customFields.length + 1}`, FieldValueType.STRING, "test", true, false);
+    if (!newFieldName) {
+      setError('Field name is required');
+      return;
+    }
+
+    const newField = new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired);
     setCustomFields([...customFields, newField]);
+    handleCloseAddFieldDialog();
   };
 
   const handleDeleteField = (name: string) => {
@@ -91,121 +111,172 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>{isUpdate ? `Update ${type}` : `Create ${type}`}</DialogTitle>
-      <DialogContent>
-        {[...regularFields, ...customFields].map(field => {
-          const isEditable = field instanceof EditableField;
-          const isCustomField = field.isCustomField;
+    <>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+        <DialogTitle>{isUpdate ? `Update ${type}` : `Create ${type}`}</DialogTitle>
+        <DialogContent>
+          {[...regularFields, ...customFields].map(field => {
+            const isEditable = field instanceof EditableField;
+            const isCustomField = field.isCustomField;
 
-          switch (field.valueType) {
-            case FieldValueType.STRING:
-            case FieldValueType.NUMBER:
-              return (
-                <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
-                  <TextField
-                    label={field.name}
-                    placeholder={isEditable ? (field.required ? '(required)' : '') : field.initialValue?.toString()}
-                    type={field.valueType === FieldValueType.NUMBER ? 'number' : 'text'}
-                    value={isEditable ? (formValues[field.name] || '') : field.initialValue?.toString()}
-                    onChange={e => handleChange(field.name, field.valueType === FieldValueType.NUMBER ? parseFloat(e.target.value) : e.target.value)}
-                    required={isEditable && field.required}
-                    disabled={!isEditable || loading}
-                    fullWidth
-                    margin="normal"
-                    InputLabelProps={{ shrink: true }}
-                    error={!!fieldErrors[field.name]}
-                    helperText={fieldErrors[field.name]}
-                  />
-                  {isCustomField && (
-                    <IconButton
-                      onClick={() => handleDeleteField(field.name)}
+            switch (field.valueType) {
+              case FieldValueType.STRING:
+              case FieldValueType.NUMBER:
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
+                    <TextField
+                      label={field.name}
+                      placeholder={isEditable ? (field.required ? '(required)' : '') : field.initialValue?.toString()}
+                      type={field.valueType === FieldValueType.NUMBER ? 'number' : 'text'}
+                      value={isEditable ? (formValues[field.name] || '') : field.initialValue?.toString()}
+                      onChange={e => handleChange(field.name, field.valueType === FieldValueType.NUMBER ? parseFloat(e.target.value) : e.target.value)}
+                      required={isEditable && field.required}
                       disabled={!isEditable || loading}
-                    >
-                      <DeleteOutlined />
-                    </IconButton>
-                  )}
-                </div>
-              );
-            case FieldValueType.BOOLEAN:
-              return (
-                <FormControl component="fieldset" key={field.name} margin="normal" fullWidth error={!!fieldErrors[field.name]}>
-                  <FormLabel component="legend">{field.name}</FormLabel>
-                  <RadioGroup
-                    row
-                    value={formValues[field.name] || false}
-                    onChange={e => handleChange(field.name, e.target.value === 'true')}
-                  >
-                    <FormControlLabel value={true} control={<Radio />} label="True" disabled={!isEditable || loading} />
-                    <FormControlLabel value={false} control={<Radio />} label="False" disabled={!isEditable || loading} />
-                  </RadioGroup>
-                  {fieldErrors[field.name] && <FormHelperText>{fieldErrors[field.name]}</FormHelperText>}
-                  {isCustomField && (
-                    <IconButton
-                      onClick={() => handleDeleteField(field.name)}
-                      disabled={!isEditable || loading}
-                    >
-                      <DeleteOutlined />
-                    </IconButton>
-                  )}
-                </FormControl>
-              );
-            case FieldValueType.DATE:
-              return (
-                <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker 
-                      label={field.name} 
-                      value={formValues[field.name] ? dayjs(formValues[field.name].toString()) : null}
-                      onChange={(date: Dayjs | null) => handleChange(field.name, dayjs(date).toDate())}
-                      slotProps={{
-                        textField: {
-                          placeholder: isEditable ? (field.required ? '(required)' : '') : field.initialValue?.toString(),
-                          required: isEditable && field.required,
-                          disabled: !isEditable || loading,
-                          fullWidth: true,
-                          margin: "normal",
-                          error: !!fieldErrors[field.name],
-                          helperText: fieldErrors[field.name]
-                        },
-                      }}
+                      fullWidth
+                      margin="normal"
+                      InputLabelProps={{ shrink: true }}
+                      error={!!fieldErrors[field.name]}
+                      helperText={fieldErrors[field.name]}
                     />
-                  </LocalizationProvider>
-                  {isCustomField && (
-                    <IconButton
-                      onClick={() => handleDeleteField(field.name)}
-                      disabled={!isEditable || loading}
+                    {isCustomField && (
+                      <IconButton
+                        onClick={() => handleDeleteField(field.name)}
+                        disabled={!isEditable || loading}
+                      >
+                        <DeleteOutlined />
+                      </IconButton>
+                    )}
+                  </div>
+                );
+              case FieldValueType.BOOLEAN:
+                return (
+                  <FormControl component="fieldset" key={field.name} margin="normal" fullWidth error={!!fieldErrors[field.name]}>
+                    <FormLabel component="legend">{field.name}</FormLabel>
+                    <RadioGroup
+                      row
+                      value={formValues[field.name] || false}
+                      onChange={e => handleChange(field.name, e.target.value === 'true')}
                     >
-                      <DeleteOutlined />
-                    </IconButton>
-                  )}
-                </div>
-              );
-            default:
-              return null;
-          }
-        })}
-        <Button
-          onClick={handleAddField}
-          color="primary"
-          startIcon={<AddOutlined />}
-          disabled={loading}
-          fullWidth
-          style={{ marginTop: '1em' }}
-        >
-          Add Property
-        </Button>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary" disabled={loading}>
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit} color="primary" disabled={loading}>
-          {loading ? <CircularProgress size={24} /> : 'OK'}
-        </Button>
-      </DialogActions>
-      <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)} message={error} />
-    </Dialog>
+                      <FormControlLabel value={true} control={<Radio />} label="True" disabled={!isEditable || loading} />
+                      <FormControlLabel value={false} control={<Radio />} label="False" disabled={!isEditable || loading} />
+                      {isCustomField && (
+                        <IconButton
+                          onClick={() => handleDeleteField(field.name)}
+                          disabled={!isEditable || loading}
+                        >
+                          <DeleteOutlined />
+                        </IconButton>
+                      )}
+                    </RadioGroup>
+                    {fieldErrors[field.name] && <FormHelperText>{fieldErrors[field.name]}</FormHelperText>}
+                  </FormControl>
+                );
+              case FieldValueType.DATE:
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        label={field.name}
+                        value={formValues[field.name] ? dayjs(formValues[field.name].toString()) : null}
+                        onChange={(date: Dayjs | null) => handleChange(field.name, dayjs(date).toDate())}
+                        slotProps={{
+                          textField: {
+                            placeholder: isEditable ? (field.required ? '(required)' : '') : field.initialValue?.toString(),
+                            required: isEditable && field.required,
+                            disabled: !isEditable || loading,
+                            fullWidth: true,
+                            margin: "normal",
+                            error: !!fieldErrors[field.name],
+                            helperText: fieldErrors[field.name]
+                          },
+                        }}
+                      />
+                    </LocalizationProvider>
+                    {isCustomField && (
+                      <IconButton
+                        onClick={() => handleDeleteField(field.name)}
+                        disabled={!isEditable || loading}
+                      >
+                        <DeleteOutlined />
+                      </IconButton>
+                    )}
+                  </div>
+                );
+              default:
+                return null;
+            }
+          })}
+          <Button
+            onClick={handleOpenAddFieldDialog}
+            color="primary"
+            startIcon={<AddOutlined />}
+            disabled={loading}
+            fullWidth
+            style={{ marginTop: '1em' }}
+          >
+            Add Property
+          </Button>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} color="primary" disabled={loading}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary" disabled={loading}>
+            {loading ? <CircularProgress size={24} /> : 'Ok'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={addFieldDialogOpen} onClose={handleCloseAddFieldDialog}>
+        <DialogTitle>Add Custom Property</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Field Name"
+            value={newFieldName}
+            onChange={e => setNewFieldName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <FormControl fullWidth margin="normal">
+            <FormLabel>Value Type</FormLabel>
+            <Select
+              value={newFieldValueType}
+              onChange={e => setNewFieldValueType(e.target.value as FieldValueType)}
+            >
+              <MenuItem value={FieldValueType.STRING}>String</MenuItem>
+              <MenuItem value={FieldValueType.NUMBER}>Number</MenuItem>
+              <MenuItem value={FieldValueType.BOOLEAN}>Boolean</MenuItem>
+              <MenuItem value={FieldValueType.DATE}>Date</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControlLabel
+            control={
+              <Radio
+                checked={newFieldRequired}
+                onChange={e => setNewFieldRequired(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Required"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAddFieldDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddField} color="primary">
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {error && (
+        <Snackbar
+          open={!!error}
+          autoHideDuration={6000}
+          onClose={() => setError(null)}
+          message={error}
+        />
+      )}
+    </>
   );
 };
 

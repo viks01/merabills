@@ -47,10 +47,10 @@ const App: React.FC = () => {
   const fields = [
     new EditableField('Name', FieldValueType.STRING, '', true, true),
     new EditableField('Description', FieldValueType.STRING, '', true, false),
-    new EditableField('Date', FieldValueType.DATE, new Date(), true, false),
+    new EditableField('Date', FieldValueType.DATE, new Date(), true, true),
     new EditableField('Amount', FieldValueType.NUMBER, 0, true, true),
     new EditableField('Active', FieldValueType.BOOLEAN, false, true, true),
-    new Field('Static Info', FieldValueType.STRING, 'This is a static field', false)
+    new Field('Static Info', FieldValueType.STRING, 'This is a static field', true)
   ];
 
   const handleDialogSubmit = async (data: Record<string, FieldType>) => {
