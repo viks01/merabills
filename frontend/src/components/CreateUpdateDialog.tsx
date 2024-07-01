@@ -149,13 +149,16 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 return (
                   <FormControl component="fieldset" key={field.name} margin="normal" fullWidth error={!!fieldErrors[field.name]}>
                     <FormLabel component="legend">{field.name}</FormLabel>
-                    <RadioGroup
-                      row
-                      value={formValues[field.name] || false}
-                      onChange={e => handleChange(field.name, e.target.value === 'true')}
-                    >
-                      <FormControlLabel value={true} control={<Radio />} label="True" disabled={!isEditable || loading} />
-                      <FormControlLabel value={false} control={<Radio />} label="False" disabled={!isEditable || loading} />
+                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                      <RadioGroup
+                        row
+                        value={formValues[field.name] || false}
+                        onChange={e => handleChange(field.name, e.target.value === 'true')}
+                      >
+                        <FormControlLabel value={true} control={<Radio />} label="True" disabled={!isEditable || loading} />
+                        <FormControlLabel value={false} control={<Radio />} label="False" disabled={!isEditable || loading} />
+                      </RadioGroup>
+                      {fieldErrors[field.name] && <FormHelperText>{fieldErrors[field.name]}</FormHelperText>}
                       {isCustomField && (
                         <IconButton
                           onClick={() => handleDeleteField(field.name)}
@@ -164,8 +167,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                           <DeleteOutlined />
                         </IconButton>
                       )}
-                    </RadioGroup>
-                    {fieldErrors[field.name] && <FormHelperText>{fieldErrors[field.name]}</FormHelperText>}
+                    </div>
                   </FormControl>
                 );
               case FieldValueType.DATE:
@@ -250,6 +252,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 onClick={handleToggleAddField}
                 color="primary"
                 disabled={loading}
+                variant="contained"
               >
                 Cancel
               </Button>
@@ -257,6 +260,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 onClick={handleAddField}
                 color="primary"
                 disabled={loading}
+                variant="contained"
               >
                 Ok
               </Button>
