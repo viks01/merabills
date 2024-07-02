@@ -32,6 +32,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   const [newFieldName, setNewFieldName] = useState('');
   const [newFieldValueType, setNewFieldValueType] = useState<FieldValueType>(FieldValueType.STRING);
   const [newFieldRequired, setNewFieldRequired] = useState(false);
+  const [initialFieldNames, setInitialFieldNames] = useState<string[]>([]);
 
   useEffect(() => {
     const initialValues: Record<string, FieldType> = {};
@@ -43,6 +44,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     setFormValues(initialValues);
     setRegularFields(fields.filter(field => !field.isCustomField));
     setCustomFields(fields.filter(field => field.isCustomField));
+    setInitialFieldNames(fields.map(field => field.name));
   }, [isUpdate, fields]);
 
   const handleChange = (name: string, value: FieldType) => {
@@ -78,7 +80,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
       return;
     }
 
-    const newField = new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired, "(new property)");
+    const newField = new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired);
     setCustomFields([...customFields, newField]);
     setNewFieldName('');
     setNewFieldValueType(FieldValueType.STRING);
@@ -121,7 +123,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 return (
                   <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
                     <TextField
-                      label={field.label ? `${field.name} ${field.label}` : field.name}
+                      label={initialFieldNames.includes(field.name) ? field.name : `${field.name} (new property)`}
                       placeholder={isEditable ? (field.required ? '(required)' : '') : field.initialValue?.toString()}
                       type={field.valueType === FieldValueType.NUMBER ? 'number' : 'text'}
                       value={isEditable ? (formValues[field.name] || '') : field.initialValue?.toString()}
@@ -147,7 +149,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
               case FieldValueType.BOOLEAN:
                 return (
                   <FormControl component="fieldset" key={field.name} margin="normal" fullWidth error={!!fieldErrors[field.name]}>
-                    <FormLabel component="legend">{field.label ? `${field.name} ${field.label}` : field.name}</FormLabel>
+                    <FormLabel component="legend">{initialFieldNames.includes(field.name) ? field.name : `${field.name} (new property)`}</FormLabel>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <RadioGroup
                         row
@@ -174,7 +176,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                   <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
-                        label={field.label ? `${field.name} ${field.label}` : field.name}
+                        label={initialFieldNames.includes(field.name) ? field.name : `${field.name} (new property)`}
                         value={formValues[field.name] ? dayjs(formValues[field.name].toString()) : null}
                         onChange={(date: Dayjs | null) => handleChange(field.name, dayjs(date).toDate())}
                         slotProps={{
@@ -203,7 +205,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
               case FieldValueType.ENUM:
                 return (
                   <FormControl fullWidth margin="normal" key={field.name}>
-                    <FormLabel>{field.label ? `${field.name} ${field.label}` : field.name}</FormLabel>
+                    <FormLabel>{initialFieldNames.includes(field.name) ? field.name : `${field.name} (new property)`}</FormLabel>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Select
                         value={formValues[field.name] || ''}

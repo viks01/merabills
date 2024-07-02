@@ -58,7 +58,7 @@ const App: React.FC = () => {
     new EditableField('Amount', FieldValueType.NUMBER, 0, true, true),
     new EditableField('Active', FieldValueType.BOOLEAN, false, true, true),
     new Field('Static Info', FieldValueType.STRING, 'This is a static field', true),
-    new EditableField('Status', FieldValueType.ENUM, '', true, true, '', statusEnumValues)
+    new EditableField('Status', FieldValueType.ENUM, '', true, true, statusEnumValues)
   ];
 
   const handleDialogSubmit = async (data: Record<string, FieldType>) => {
