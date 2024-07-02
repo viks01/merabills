@@ -78,7 +78,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
       return;
     }
 
-    const newField = new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired);
+    const newField = new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired, "(new property)");
     setCustomFields([...customFields, newField]);
     setNewFieldName('');
     setNewFieldValueType(FieldValueType.STRING);
@@ -121,7 +121,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 return (
                   <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
                     <TextField
-                      label={field.name}
+                      label={field.label ? `${field.name} ${field.label}` : field.name}
                       placeholder={isEditable ? (field.required ? '(required)' : '') : field.initialValue?.toString()}
                       type={field.valueType === FieldValueType.NUMBER ? 'number' : 'text'}
                       value={isEditable ? (formValues[field.name] || '') : field.initialValue?.toString()}
@@ -147,7 +147,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
               case FieldValueType.BOOLEAN:
                 return (
                   <FormControl component="fieldset" key={field.name} margin="normal" fullWidth error={!!fieldErrors[field.name]}>
-                    <FormLabel component="legend">{field.name}</FormLabel>
+                    <FormLabel component="legend">{field.label ? `${field.name} ${field.label}` : field.name}</FormLabel>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <RadioGroup
                         row
@@ -174,7 +174,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                   <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
-                        label={field.name}
+                        label={field.label ? `${field.name} ${field.label}` : field.name}
                         value={formValues[field.name] ? dayjs(formValues[field.name].toString()) : null}
                         onChange={(date: Dayjs | null) => handleChange(field.name, dayjs(date).toDate())}
                         slotProps={{
@@ -199,6 +199,37 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                       </IconButton>
                     )}
                   </div>
+                );
+              case FieldValueType.ENUM:
+                return (
+                  <FormControl fullWidth margin="normal" key={field.name}>
+                    <FormLabel>{field.label ? `${field.name} ${field.label}` : field.name}</FormLabel>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <Select
+                        value={formValues[field.name] || ''}
+                        onChange={e => handleChange(field.name, e.target.value)}
+                        disabled={!isEditable || loading}
+                        error={!!fieldErrors[field.name]}
+                        fullWidth
+                      >
+                        {field.enumValues && Object.entries(field.enumValues).map(([key, value]) => (
+                          <MenuItem key={key} value={value}>
+                            {key}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {fieldErrors[field.name] && <FormHelperText>{fieldErrors[field.name]}</FormHelperText>}
+                      {isCustomField && (
+                        <IconButton
+                          onClick={() => handleDeleteField(field.name)}
+                          disabled={!isEditable || loading}
+                        >
+                          <DeleteOutlined />
+                        </IconButton>
+                      )}
+                    </div>
+                  </FormControl>
+
                 );
               default:
                 return null;

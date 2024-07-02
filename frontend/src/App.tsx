@@ -44,13 +44,21 @@ const App: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
 
+  const statusEnumValues = {
+    ACTIVE: 1,
+    DRAFT: 2,
+    INACTIVE: 3
+  };
+
+
   const fields = [
     new EditableField('Name', FieldValueType.STRING, '', true, true),
     new EditableField('Description', FieldValueType.STRING, '', true, false),
     new EditableField('Date', FieldValueType.DATE, new Date(), true, true),
     new EditableField('Amount', FieldValueType.NUMBER, 0, true, true),
     new EditableField('Active', FieldValueType.BOOLEAN, false, true, true),
-    new Field('Static Info', FieldValueType.STRING, 'This is a static field', true)
+    new Field('Static Info', FieldValueType.STRING, 'This is a static field', true),
+    new EditableField('Status', FieldValueType.ENUM, '', true, true, '', statusEnumValues)
   ];
 
   const handleDialogSubmit = async (data: Record<string, FieldType>) => {
