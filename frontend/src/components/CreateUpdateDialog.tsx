@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
+  Alert, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
   CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel,
   FormControl, FormLabel, FormHelperText, IconButton, MenuItem, Select,
   Collapse, Checkbox
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { AddOutlined, DeleteOutlined } from '@mui/icons-material';
+import { AddOutlined, DeleteOutlined, MyLocation } from '@mui/icons-material';
 
-import { Field, EditableField, FieldType, FieldValueType } from '../model/Field';
+import { Field, EditableField, FieldType, FieldValueType, Content, ContentType } from '../model/Field';
+import { LatLong } from '../model/LatLong';
+
 import dayjs, { Dayjs } from 'dayjs';
+import { debounce } from 'lodash';
+import { useGeolocated } from 'react-geolocated';
 
 interface CreateUpdateDialogProps {
   type: string;
@@ -33,6 +37,17 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   const [newFieldValueType, setNewFieldValueType] = useState<FieldValueType>(FieldValueType.STRING);
   const [newFieldRequired, setNewFieldRequired] = useState(false);
   const [initialFieldNames, setInitialFieldNames] = useState<string[]>([]);
+  const [newFieldEnumValues, setNewFieldEnumValues] = useState<Record<string, number>>({}); // For new enum fields
+  const [enumValueKey, setEnumValueKey] = useState('');
+  const [enumValue, setEnumValue] = useState<number | ''>('');
+  const [rawLatLongValues, setRawLatLongValues] = useState<Record<string, string>>({});
+  const { coords, isGeolocationAvailable, isGeolocationEnabled } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: false,
+    },
+    userDecisionTimeout: 5000,
+  });
+  const [rawUrlValues, setRawUrlValues] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const initialValues: Record<string, FieldType> = {};
@@ -80,11 +95,13 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
       return;
     }
 
-    const newField = new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired);
+    const newField = (newFieldValueType === FieldValueType.ENUM) ? new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired) : new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired, newFieldEnumValues);
     setCustomFields([...customFields, newField]);
     setNewFieldName('');
     setNewFieldValueType(FieldValueType.STRING);
     setNewFieldRequired(false);
+    setNewFieldEnumValues({});
+    setIsAddFieldExpanded(false);
   };
 
   const handleDeleteField = (name: string) => {
@@ -92,6 +109,61 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     setRegularFields(regularFields.filter(field => field.name !== name));
     const { [name]: deletedValue, ...restFormValues } = formValues;
     setFormValues(restFormValues);
+  };
+
+  const handleLatLongChange = (name: string, value: string) => {
+    setRawLatLongValues({ [name]: value });
+  };
+
+  const debouncedValidateLatLong = debounce((name: string, value: string) => {
+    const [lat, long] = value.split(',').map(Number);
+    if (!isNaN(lat) && !isNaN(long)) {
+      handleChange(name, new LatLong(lat, long));
+      setFieldErrors({ ...fieldErrors, [name]: '' });
+    } else {
+      setFieldErrors({ ...fieldErrors, [name]: 'Invalid LatLong format' });
+    }
+  }, 1000);
+
+  const isValidUrl = (urlString: string) => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const handleUrlChange = (name: string, value: string) => {
+    setRawUrlValues({ [name]: value });
+  };
+
+  const debouncedValidateURL = debounce((fieldName: string, value: string) => {
+    if (isValidUrl(value) && (formValues[fieldName] as Content) && (formValues[fieldName] as Content).contentType) {
+      handleChange(fieldName, {
+        contentType: (formValues[fieldName] as Content).contentType,
+        url: new URL(value)
+      });
+      setFieldErrors({ ...fieldErrors, [fieldName]: '' });
+    } else if (!rawUrlValues[fieldName] || (rawUrlValues[fieldName] === '' && (formValues[fieldName] as Content).contentType)) {
+      setFieldErrors({ ...fieldErrors, [fieldName]: '' });
+    } else {
+      setFieldErrors({ ...fieldErrors, [fieldName]: 'Invalid URL or Content Type' });
+    }
+  }, 1000);
+
+  const handleContentTypeChange = (fieldName: string, contentType: ContentType) => {
+    if (isValidUrl(rawUrlValues[fieldName]) && contentType) {
+      handleChange(fieldName, {
+        url: new URL(rawUrlValues[fieldName]),
+        contentType: contentType
+      });
+      setFieldErrors({ ...fieldErrors, [fieldName]: '' });
+    } else if (!rawUrlValues[fieldName] || (rawUrlValues[fieldName] === '' && contentType)) {
+      setFieldErrors({ ...fieldErrors, [fieldName]: '' });
+    } else {
+      setFieldErrors({ ...fieldErrors, [fieldName]: 'Invalid URL or Content Type' });
+    }
   };
 
   const handleSubmit = async () => {
@@ -105,6 +177,14 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const addEnumValue = () => {
+    if (enumValueKey && enumValue !== '') {
+      setNewFieldEnumValues({ ...newFieldEnumValues, [enumValueKey]: Number(enumValue) });
+      setEnumValueKey('');
+      setEnumValue('');
     }
   };
 
@@ -231,7 +311,117 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                       )}
                     </div>
                   </FormControl>
-
+                );
+              case FieldValueType.LATLONG:
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center' }} key={field.name}>
+                    <TextField
+                      label={initialFieldNames.includes(field.name) ? field.name : `${field.name} (new property)`}
+                      placeholder={isEditable ? (field.required ? 'lat, long (required)' : 'lat, long') : field.initialValue?.toString()}
+                      type='text'
+                      value={isEditable ? (rawLatLongValues[field.name] || '') : field.initialValue?.toString()}
+                      onChange={e => handleLatLongChange(field.name, e.target.value)}
+                      onBlur={() => {
+                        if (!rawLatLongValues[field.name] || rawLatLongValues[field.name] === "") {
+                          //delete fieldErrors[field.name];
+                          setFieldErrors({ ...fieldErrors, [field.name]: '' });
+                          return;
+                        };
+                        if (!rawLatLongValues[field.name].includes(",")) {
+                          setFieldErrors({ ...fieldErrors, [field.name]: 'Invalid LatLong format' });
+                          return;
+                        }
+                        let result = rawLatLongValues[field.name].split(',').map(Number).join(',');
+                        handleLatLongChange(field.name, result);
+                        debouncedValidateLatLong(field.name, result);
+                      }}
+                      required={isEditable && field.required}
+                      disabled={!isEditable || loading}
+                      fullWidth
+                      margin="normal"
+                      InputLabelProps={{ shrink: true }}
+                      error={!!fieldErrors[field.name]}
+                      helperText={fieldErrors[field.name]}
+                      style={{ marginRight: '10px' }}
+                    />
+                    <Button
+                      onClick={() => {
+                        if (!isGeolocationAvailable) {
+                          setError('Geolocation is not available on this browser.');
+                          return;
+                        }
+                        if (!isGeolocationEnabled) {
+                          setError('Geolocation is not enabled. Please enable it in your browser settings.');
+                          return;
+                        }
+                        if (coords) {
+                          const value = `${coords.latitude}, ${coords.longitude}`;
+                          handleLatLongChange(field.name, value);
+                          debouncedValidateLatLong(field.name, value);
+                        } else {
+                          setError('Unable to retrieve your current location.');
+                        }
+                      }}
+                      disabled={!isEditable || loading}
+                      variant="outlined"
+                      startIcon={<MyLocation />}
+                    >
+                      Use Current Location
+                    </Button>
+                    {isCustomField && (
+                      <IconButton
+                        onClick={() => handleDeleteField(field.name)}
+                        disabled={!isEditable || loading}
+                      >
+                        <DeleteOutlined />
+                      </IconButton>
+                    )}
+                  </div>
+                );
+              case FieldValueType.CONTENT:
+                return (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }} key={field.name}>
+                    <FormControl fullWidth margin="normal">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }} key={field.name}>
+                        <FormLabel>{initialFieldNames.includes(field.name) ? field.name : `${field.name} (new property)`}</FormLabel>
+                        <TextField
+                          label={"URL"}
+                          placeholder="URL"
+                          value={isEditable ? (rawUrlValues[field.name] || '') : (formValues[field.name] as Content).url.toString()}
+                          onChange={e => handleUrlChange(field.name, e.target.value)}
+                          onBlur={() => debouncedValidateURL(field.name, rawUrlValues[field.name])}
+                          required={isEditable && field.required}
+                          disabled={!isEditable || loading}
+                          fullWidth
+                          margin="normal"
+                          InputLabelProps={{ shrink: true }}
+                          error={!!fieldErrors[field.name]}
+                          helperText={fieldErrors[field.name]}
+                        />
+                        <FormLabel>Content Type</FormLabel>
+                        <Select
+                          value={formValues[field.name] ? (formValues[field.name] as Content).contentType : ''}
+                          onChange={e => handleContentTypeChange(field.name, e.target.value as ContentType)}
+                          disabled={!isEditable || loading}
+                          error={!!fieldErrors[field.name]}
+                          fullWidth
+                        >
+                          <MenuItem value={ContentType.IMAGE}>Image</MenuItem>
+                          <MenuItem value={ContentType.VIDEO}>Video</MenuItem>
+                          <MenuItem value={ContentType.AUDIO}>Audio</MenuItem>
+                        </Select>
+                        {/* {fieldErrors[field.name] && <FormHelperText>{fieldErrors[field.name]}</FormHelperText>} */}
+                      </div>
+                    </FormControl>
+                    {isCustomField && (
+                      <IconButton
+                        onClick={() => handleDeleteField(field.name)}
+                        disabled={!isEditable || loading}
+                      >
+                        <DeleteOutlined />
+                      </IconButton>
+                    )}
+                  </div>
                 );
               default:
                 return null;
@@ -265,8 +455,37 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                   <MenuItem value={FieldValueType.NUMBER}>Number</MenuItem>
                   <MenuItem value={FieldValueType.BOOLEAN}>Boolean</MenuItem>
                   <MenuItem value={FieldValueType.DATE}>Date</MenuItem>
+                  <MenuItem value={FieldValueType.ENUM}>Enum</MenuItem>
+                  <MenuItem value={FieldValueType.LATLONG}>LatLong</MenuItem>
+                  <MenuItem value={FieldValueType.CONTENT}>Content</MenuItem>
                 </Select>
               </FormControl>
+              {newFieldValueType === FieldValueType.ENUM && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1em', width: '100%' }}>
+                  <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
+                    <TextField
+                      label="Key"
+                      value={enumValueKey}
+                      onChange={e => setEnumValueKey(e.target.value)}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Value"
+                      value={enumValue}
+                      onChange={e => setEnumValue(Number(e.target.value))}
+                      fullWidth
+                    />
+                    <Button onClick={addEnumValue} color="primary" variant="contained">
+                      Add Enum Value
+                    </Button>
+                  </div>
+                  <ul>
+                    {Object.entries(newFieldEnumValues).map(([key, value]) => (
+                      <li key={key}>{`${key}: ${value}`}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               <FormControlLabel
                 control={
                   <Checkbox
@@ -285,7 +504,11 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
               </Button>
             </div>
           </Collapse>
-          {error && <Snackbar open={!!error} message={error} autoHideDuration={6000} onClose={() => setError(null)} />}
+          {error && (
+            <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)} >
+              <Alert severity="error">{error}</Alert>
+            </Snackbar>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color="primary" disabled={loading}>

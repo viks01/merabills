@@ -1,3 +1,5 @@
+import { LatLong } from "./LatLong";
+
 export enum FieldValueType {
     STRING = 0,
     BOOLEAN = 1,
@@ -5,9 +7,23 @@ export enum FieldValueType {
     DATE = 3,
     MAP = 4,
     ENUM = 5,
+    LATLONG = 6,
+    URL = 7,
+    CONTENT = 8,
 }
 
-export type FieldType = string | boolean | number | Date | Record<string, number>;
+export enum ContentType {
+    IMAGE = 0,
+    VIDEO = 1,
+    AUDIO = 2,
+}
+
+export type Content = {
+    url: URL;
+    contentType: ContentType;
+};
+
+export type FieldType = string | boolean | number | Date | Record<string, number> | LatLong | URL | Content;
 
 export class Field {
     constructor(

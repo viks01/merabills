@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@material-ui/styles": "^4.11.5",
     "@mui/icons-material": "^5.15.18",
     "@mui/joy": "^5.0.0-beta.36",
     "@mui/lab": "^5.0.0-alpha.170",
@@ -24,8 +25,10 @@
     "i18next": "^23.11.4",
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-http-backend": "^2.5.2",
+    "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-geolocated": "^4.1.2",
     "react-i18next": "^14.1.1",
     "react-scripts": "5.0.1",
     "typescript": "^5.4.5",
@@ -56,6 +59,7 @@
     ]
   },
   "devDependencies": {
-    "@types/google-map-react": "^2.1.10"
+    "@types/google-map-react": "^2.1.10",
+    "@types/lodash": "^4.17.6"
   }
 }

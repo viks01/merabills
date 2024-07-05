@@ -58,7 +58,8 @@ const App: React.FC = () => {
     new EditableField('Amount', FieldValueType.NUMBER, 0, true, true),
     new EditableField('Active', FieldValueType.BOOLEAN, false, true, true),
     new Field('Static Info', FieldValueType.STRING, 'This is a static field', true),
-    new EditableField('Status', FieldValueType.ENUM, '', true, true, statusEnumValues)
+    new EditableField('Status', FieldValueType.ENUM, '', true, true, statusEnumValues),
+    new EditableField('Location', FieldValueType.LATLONG, new LatLong(40.712776, -74.005974), true, true),
   ];
 
   const handleDialogSubmit = async (data: Record<string, FieldType>) => {
