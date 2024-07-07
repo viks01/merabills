@@ -3,7 +3,7 @@ import {
   Alert, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
   CircularProgress, Snackbar, Radio, RadioGroup, FormControlLabel,
   FormControl, FormLabel, FormHelperText, IconButton, MenuItem, Select,
-  Collapse, Checkbox
+  Collapse, Checkbox, InputLabel
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -23,9 +23,10 @@ interface CreateUpdateDialogProps {
   onSubmit: (data: Record<string, FieldType>) => Promise<void>;
   onClose: () => void;
   open: boolean;
+  addCustomFields: ReadonlyArray<FieldValueType>;
 }
 
-const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate, fields, onSubmit, onClose, open }) => {
+const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate, fields, onSubmit, onClose, open, addCustomFields }) => {
   const [formValues, setFormValues] = useState<Record<string, FieldType>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,9 +38,9 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   const [newFieldValueType, setNewFieldValueType] = useState<FieldValueType>(FieldValueType.STRING);
   const [newFieldRequired, setNewFieldRequired] = useState(false);
   const [initialFieldNames, setInitialFieldNames] = useState<string[]>([]);
-  const [newFieldEnumValues, setNewFieldEnumValues] = useState<Record<string, number>>({}); // For new enum fields
-  const [enumValueKey, setEnumValueKey] = useState('');
-  const [enumValue, setEnumValue] = useState<number | ''>('');
+  // const [newFieldEnumValues, setNewFieldEnumValues] = useState<Record<string, number>>({}); // For new enum fields
+  // const [enumValueKey, setEnumValueKey] = useState('');
+  // const [enumValue, setEnumValue] = useState<number | ''>('');
   const [rawLatLongValues, setRawLatLongValues] = useState<Record<string, string>>({});
   const { coords, isGeolocationAvailable, isGeolocationEnabled } = useGeolocated({
     positionOptions: {
@@ -95,12 +96,13 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
       return;
     }
 
-    const newField = (newFieldValueType === FieldValueType.ENUM) ? new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired) : new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired, newFieldEnumValues);
+    // const newField = (newFieldValueType === FieldValueType.ENUM) ? new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired) : new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired, newFieldEnumValues);
+    const newField = new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired);
     setCustomFields([...customFields, newField]);
     setNewFieldName('');
     setNewFieldValueType(FieldValueType.STRING);
     setNewFieldRequired(false);
-    setNewFieldEnumValues({});
+    // setNewFieldEnumValues({});
     setIsAddFieldExpanded(false);
   };
 
@@ -180,13 +182,13 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
     }
   };
 
-  const addEnumValue = () => {
-    if (enumValueKey && enumValue !== '') {
-      setNewFieldEnumValues({ ...newFieldEnumValues, [enumValueKey]: Number(enumValue) });
-      setEnumValueKey('');
-      setEnumValue('');
-    }
-  };
+  // const addEnumValue = () => {
+  //   if (enumValueKey && enumValue !== '') {
+  //     setNewFieldEnumValues({ ...newFieldEnumValues, [enumValueKey]: Number(enumValue) });
+  //     setEnumValueKey('');
+  //     setEnumValue('');
+  //   }
+  // };
 
   return (
     <>
@@ -288,7 +290,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                     <FormLabel>{initialFieldNames.includes(field.name) ? field.name : `${field.name} (new property)`}</FormLabel>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Select
-                        value={formValues[field.name] || ''}
+                        value={field.initialValue ? field.initialValue : (formValues[field.name] || '')}
                         onChange={e => handleChange(field.name, e.target.value)}
                         disabled={!isEditable || loading}
                         error={!!fieldErrors[field.name]}
@@ -427,16 +429,18 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 return null;
             }
           })}
-          <Button
-            onClick={handleToggleAddField}
-            color="primary"
-            variant="outlined"
-            startIcon={<AddOutlined />}
-            disabled={loading}
-            style={{ marginTop: '1em' }}
-          >
-            Add Property
-          </Button>
+          {addCustomFields.length > 0 && (
+            <Button
+              onClick={handleToggleAddField}
+              color="primary"
+              variant="outlined"
+              startIcon={<AddOutlined />}
+              disabled={loading}
+              style={{ marginTop: '1em' }}
+            >
+              Add Property
+            </Button>
+          )}
           <Collapse in={isAddFieldExpanded} style={{ border: '1px solid #ccc', padding: '1em', borderRadius: '4px', marginTop: '1em' }}>
             <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
               <TextField
@@ -446,21 +450,21 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 fullWidth
               />
               <FormControl fullWidth>
+                <InputLabel>Field Type</InputLabel>
                 <Select
                   label="Field Type"
                   value={newFieldValueType}
                   onChange={e => setNewFieldValueType(e.target.value as FieldValueType)}
                 >
-                  <MenuItem value={FieldValueType.STRING}>String</MenuItem>
-                  <MenuItem value={FieldValueType.NUMBER}>Number</MenuItem>
-                  <MenuItem value={FieldValueType.BOOLEAN}>Boolean</MenuItem>
-                  <MenuItem value={FieldValueType.DATE}>Date</MenuItem>
-                  <MenuItem value={FieldValueType.ENUM}>Enum</MenuItem>
-                  <MenuItem value={FieldValueType.LATLONG}>LatLong</MenuItem>
-                  <MenuItem value={FieldValueType.CONTENT}>Content</MenuItem>
+                  {addCustomFields.map(fieldType => (
+                    (fieldType !== FieldValueType.ENUM) &&
+                    <MenuItem key={fieldType} value={fieldType}>
+                      {Object.keys(FieldValueType)[Object.values(FieldValueType).indexOf(fieldType)]}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
-              {newFieldValueType === FieldValueType.ENUM && (
+              {/* {newFieldValueType === FieldValueType.ENUM && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1em', width: '100%' }}>
                   <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
                     <TextField
@@ -485,7 +489,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                     ))}
                   </ul>
                 </div>
-              )}
+              )} */}
               <FormControlLabel
                 control={
                   <Checkbox

@@ -5,11 +5,10 @@ export enum FieldValueType {
     BOOLEAN = 1,
     NUMBER = 2,
     DATE = 3,
-    MAP = 4,
-    ENUM = 5,
-    LATLONG = 6,
-    URL = 7,
-    CONTENT = 8,
+    ENUM = 4,
+    LATLONG = 5,
+    URL = 6,
+    CONTENT = 7,
 }
 
 export enum ContentType {
@@ -23,7 +22,7 @@ export type Content = {
     contentType: ContentType;
 };
 
-export type FieldType = string | boolean | number | Date | Record<string, number> | LatLong | URL | Content;
+export type FieldType = string | boolean | number | Date | LatLong | URL | Content;
 
 export class Field {
     constructor(
