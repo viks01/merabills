@@ -38,9 +38,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
   const [newFieldValueType, setNewFieldValueType] = useState<FieldValueType>(FieldValueType.STRING);
   const [newFieldRequired, setNewFieldRequired] = useState(false);
   const [initialFieldNames, setInitialFieldNames] = useState<string[]>([]);
-  // const [newFieldEnumValues, setNewFieldEnumValues] = useState<Record<string, number>>({}); // For new enum fields
-  // const [enumValueKey, setEnumValueKey] = useState('');
-  // const [enumValue, setEnumValue] = useState<number | ''>('');
   const [rawLatLongValues, setRawLatLongValues] = useState<Record<string, string>>({});
   const { coords, isGeolocationAvailable, isGeolocationEnabled } = useGeolocated({
     positionOptions: {
@@ -96,13 +93,11 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
       return;
     }
 
-    // const newField = (newFieldValueType === FieldValueType.ENUM) ? new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired) : new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired, newFieldEnumValues);
     const newField = new EditableField(newFieldName, newFieldValueType, "", true, newFieldRequired);
     setCustomFields([...customFields, newField]);
     setNewFieldName('');
     setNewFieldValueType(FieldValueType.STRING);
     setNewFieldRequired(false);
-    // setNewFieldEnumValues({});
     setIsAddFieldExpanded(false);
   };
 
@@ -181,14 +176,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
       setLoading(false);
     }
   };
-
-  // const addEnumValue = () => {
-  //   if (enumValueKey && enumValue !== '') {
-  //     setNewFieldEnumValues({ ...newFieldEnumValues, [enumValueKey]: Number(enumValue) });
-  //     setEnumValueKey('');
-  //     setEnumValue('');
-  //   }
-  // };
 
   return (
     <>
@@ -325,7 +312,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                       onChange={e => handleLatLongChange(field.name, e.target.value)}
                       onBlur={() => {
                         if (!rawLatLongValues[field.name] || rawLatLongValues[field.name] === "") {
-                          //delete fieldErrors[field.name];
                           setFieldErrors({ ...fieldErrors, [field.name]: '' });
                           return;
                         };
@@ -412,7 +398,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                           <MenuItem value={ContentType.VIDEO}>Video</MenuItem>
                           <MenuItem value={ContentType.AUDIO}>Audio</MenuItem>
                         </Select>
-                        {/* {fieldErrors[field.name] && <FormHelperText>{fieldErrors[field.name]}</FormHelperText>} */}
                       </div>
                     </FormControl>
                     {isCustomField && (
@@ -464,32 +449,6 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                   ))}
                 </Select>
               </FormControl>
-              {/* {newFieldValueType === FieldValueType.ENUM && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1em', width: '100%' }}>
-                  <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
-                    <TextField
-                      label="Key"
-                      value={enumValueKey}
-                      onChange={e => setEnumValueKey(e.target.value)}
-                      fullWidth
-                    />
-                    <TextField
-                      label="Value"
-                      value={enumValue}
-                      onChange={e => setEnumValue(Number(e.target.value))}
-                      fullWidth
-                    />
-                    <Button onClick={addEnumValue} color="primary" variant="contained">
-                      Add Enum Value
-                    </Button>
-                  </div>
-                  <ul>
-                    {Object.entries(newFieldEnumValues).map(([key, value]) => (
-                      <li key={key}>{`${key}: ${value}`}</li>
-                    ))}
-                  </ul>
-                </div>
-              )} */}
               <FormControlLabel
                 control={
                   <Checkbox
