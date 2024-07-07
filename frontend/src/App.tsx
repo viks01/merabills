@@ -62,7 +62,7 @@ const App: React.FC = () => {
     new EditableField('Location', FieldValueType.LATLONG, new LatLong(40.712776, -74.005974), true, true),
   ];
 
-  const addCustomFields: ReadonlyArray<FieldValueType> = [
+  const addCustomFieldTypes: ReadonlyArray<FieldValueType> = [
     FieldValueType.STRING, 
     FieldValueType.BOOLEAN, 
     FieldValueType.NUMBER, 
@@ -103,7 +103,7 @@ const App: React.FC = () => {
         onSubmit={handleDialogSubmit}
         onClose={() => setDialogOpen(false)}
         open={dialogOpen}
-        addCustomFields={addCustomFields}
+        addCustomFieldTypes={addCustomFieldTypes}
       />
     </div>
   );

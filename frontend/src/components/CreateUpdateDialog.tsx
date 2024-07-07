@@ -23,10 +23,10 @@ interface CreateUpdateDialogProps {
   onSubmit: (data: Record<string, FieldType>) => Promise<void>;
   onClose: () => void;
   open: boolean;
-  addCustomFields: ReadonlyArray<FieldValueType>;
+  addCustomFieldTypes: ReadonlyArray<FieldValueType>;
 }
 
-const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate, fields, onSubmit, onClose, open, addCustomFields }) => {
+const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate, fields, onSubmit, onClose, open, addCustomFieldTypes }) => {
   const [formValues, setFormValues] = useState<Record<string, FieldType>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -414,7 +414,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 return null;
             }
           })}
-          {addCustomFields.length > 0 && (
+          {addCustomFieldTypes.length > 0 && (
             <Button
               onClick={handleToggleAddField}
               color="primary"
@@ -441,7 +441,7 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                   value={newFieldValueType}
                   onChange={e => setNewFieldValueType(e.target.value as FieldValueType)}
                 >
-                  {addCustomFields.map(fieldType => (
+                  {addCustomFieldTypes.map(fieldType => (
                     (fieldType !== FieldValueType.ENUM) &&
                     <MenuItem key={fieldType} value={fieldType}>
                       {Object.keys(FieldValueType)[Object.values(FieldValueType).indexOf(fieldType)]}
