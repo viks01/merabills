@@ -11,7 +11,7 @@ import { MarkerSet } from './model/MarkerSet';
 import MapDialog from './components/MapDialog';
 import MarkerSetViewer from './components/MarkerSetViewer';
 
-import { Field, EditableField, FieldType, FieldValueType } from './model/Field';
+import { Field, EditableField, FieldType, FieldValueType, CustomFields } from './model/Field';
 import CreateUpdateDialog from './components/CreateUpdateDialog';
 
 const App: React.FC = () => {
@@ -51,7 +51,7 @@ const App: React.FC = () => {
   };
 
 
-  const fields = [
+  const fields: ReadonlyArray<Field> = [
     new EditableField('Name', FieldValueType.STRING, 'Default Name', true, true),
     new EditableField('Description', FieldValueType.STRING, 'Default Description', true, false),
     new EditableField('Date', FieldValueType.DATE, new Date(), true, true),
@@ -62,7 +62,7 @@ const App: React.FC = () => {
     new EditableField('Location', FieldValueType.LATLONG, new LatLong(40.712776, -74.005974), true, true),
   ];
 
-  const addCustomFieldTypes: ReadonlyArray<FieldValueType> = [
+  const customFieldTypes: ReadonlyArray<FieldValueType> = [
     FieldValueType.STRING, 
     FieldValueType.BOOLEAN, 
     FieldValueType.NUMBER, 
@@ -71,6 +71,8 @@ const App: React.FC = () => {
     FieldValueType.LATLONG,  
     FieldValueType.CONTENT
   ];
+
+  const customFields = new CustomFields(customFieldTypes, ['Custom Field Name 1', 'Custom Field Name 2']);
 
   const handleDialogSubmit = async (data: Record<string, FieldType>) => {
     // Simulate async operation
@@ -103,7 +105,7 @@ const App: React.FC = () => {
         onSubmit={handleDialogSubmit}
         onClose={() => setDialogOpen(false)}
         open={dialogOpen}
-        addCustomFieldTypes={addCustomFieldTypes}
+        addCustomFields={customFields}
       />
     </div>
   );

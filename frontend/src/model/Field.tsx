@@ -46,3 +46,10 @@ export class EditableField extends Field {
         super(name, valueType, initialValue, isCustomField, enumValues);
     }
 }
+
+export class CustomFields {
+    constructor(
+        public readonly customFieldTypes: ReadonlyArray<FieldValueType>,
+        public readonly customFieldNames: ReadonlyArray<string>
+    ) { }
+}

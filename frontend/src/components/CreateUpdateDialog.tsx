@@ -9,7 +9,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { AddOutlined, DeleteOutlined, MyLocation } from '@mui/icons-material';
 
-import { Field, EditableField, FieldType, FieldValueType, Content, ContentType } from '../model/Field';
+import { Field, EditableField, FieldType, FieldValueType, Content, ContentType, CustomFields } from '../model/Field';
 import { LatLong } from '../model/LatLong';
 
 import dayjs, { Dayjs } from 'dayjs';
@@ -19,14 +19,15 @@ import { useGeolocated } from 'react-geolocated';
 interface CreateUpdateDialogProps {
   type: string;
   isUpdate: boolean;
-  fields: (EditableField | Field)[];
+  // fields: (EditableField | Field)[];
+  fields: ReadonlyArray<Field>;
   onSubmit: (data: Record<string, FieldType>) => Promise<void>;
   onClose: () => void;
   open: boolean;
-  addCustomFieldTypes: ReadonlyArray<FieldValueType>;
+  addCustomFields: CustomFields;
 }
 
-const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate, fields, onSubmit, onClose, open, addCustomFieldTypes }) => {
+const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate, fields, onSubmit, onClose, open, addCustomFields }) => {
   const [formValues, setFormValues] = useState<Record<string, FieldType>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -414,59 +415,78 @@ const CreateUpdateDialog: React.FC<CreateUpdateDialogProps> = ({ type, isUpdate,
                 return null;
             }
           })}
-          {addCustomFieldTypes.length > 0 && (
-            <Button
-              onClick={handleToggleAddField}
-              color="primary"
-              variant="outlined"
-              startIcon={<AddOutlined />}
-              disabled={loading}
-              style={{ marginTop: '1em' }}
-            >
-              Add Property
-            </Button>
-          )}
-          <Collapse in={isAddFieldExpanded} style={{ border: '1px solid #ccc', padding: '1em', borderRadius: '4px', marginTop: '1em' }}>
-            <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
-              <TextField
-                label="Field Name"
-                value={newFieldName}
-                onChange={e => setNewFieldName(e.target.value)}
-                fullWidth
-              />
-              <FormControl fullWidth>
-                <InputLabel>Field Type</InputLabel>
-                <Select
-                  label="Field Type"
-                  value={newFieldValueType}
-                  onChange={e => setNewFieldValueType(e.target.value as FieldValueType)}
-                >
-                  {addCustomFieldTypes.map(fieldType => (
-                    (fieldType !== FieldValueType.ENUM) &&
-                    <MenuItem key={fieldType} value={fieldType}>
-                      {Object.keys(FieldValueType)[Object.values(FieldValueType).indexOf(fieldType)]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={newFieldRequired}
-                    onChange={e => setNewFieldRequired(e.target.checked)}
-                  />
-                }
-                label="Required"
-              />
+          {addCustomFields.customFieldTypes.length > 0 && (
+            <>
               <Button
+                onClick={handleToggleAddField}
                 color="primary"
-                variant="contained"
-                onClick={handleAddField}
+                variant="outlined"
+                startIcon={<AddOutlined />}
+                disabled={loading}
+                style={{ marginTop: '1em' }}
               >
-                Add
+                Add Property
               </Button>
-            </div>
-          </Collapse>
+              <Collapse in={isAddFieldExpanded} style={{ border: '1px solid #ccc', padding: '1em', borderRadius: '4px', marginTop: '1em' }}>
+                <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
+                  {(addCustomFields.customFieldNames.length === 0) ? (
+                    <TextField
+                      label="Field Name"
+                      value={newFieldName}
+                      onChange={e => setNewFieldName(e.target.value)}
+                      fullWidth
+                    />
+                  ) : (
+                    <FormControl fullWidth>
+                      <InputLabel>Field Name</InputLabel>
+                      <Select
+                        label="Field Name"
+                        value={newFieldName}
+                        onChange={e => setNewFieldName(e.target.value)}
+                      >
+                        {addCustomFields.customFieldNames.map(fieldName => (
+                          <MenuItem key={fieldName} value={fieldName}>
+                            {fieldName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                  <FormControl fullWidth>
+                    <InputLabel>Field Type</InputLabel>
+                    <Select
+                      label="Field Type"
+                      value={newFieldValueType}
+                      onChange={e => setNewFieldValueType(e.target.value as FieldValueType)}
+                    >
+                      {addCustomFields.customFieldTypes.map(fieldType => (
+                        (fieldType !== FieldValueType.ENUM) &&
+                        <MenuItem key={fieldType} value={fieldType}>
+                          {Object.keys(FieldValueType)[Object.values(FieldValueType).indexOf(fieldType)]}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={newFieldRequired}
+                        onChange={e => setNewFieldRequired(e.target.checked)}
+                      />
+                    }
+                    label="Required"
+                  />
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={handleAddField}
+                  >
+                    Add
+                  </Button>
+                </div>
+              </Collapse>
+            </>
+          )}
           {error && (
             <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)} >
               <Alert severity="error">{error}</Alert>
